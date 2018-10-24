@@ -1,3 +1,13 @@
+Front end dev will be using reactstrap (documentation here https://reactstrap.github.io/)
+Backend will be using sqlite3 and electron
+
+Develop like you would any react app, only when using electron ipcmain and render do we need to worry about that, which only one person will work on to avoid code collisions.
+
+
+
+Rest it generated from create-react-app:
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 Below you will find some information on how to perform common tasks.<br>
