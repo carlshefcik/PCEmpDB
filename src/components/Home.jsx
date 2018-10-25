@@ -23,7 +23,7 @@ export default class Home extends Component {
             <h4>Notes</h4>
             <p>using the <code>&lt;link&gt;</code> tags is like using the <code>&lt;a&gt;</code> tag in react-router-dom</p>
             <Link to="/">
-              <Button bsStyle="primary"> Go to next page </Button>
+              <Button color="primary"> Go to next page </Button>
             </Link>
         </Jumbotron>
       </Container>
