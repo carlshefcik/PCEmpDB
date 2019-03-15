@@ -17,13 +17,12 @@
     "express": "^4.16.4",
     "jquery": "^3.3.1",
     "mysql": "^2.16.0",
-    "popper.js": "^1.14.7",
+    "popper.js": "^1.14.4",
     "react": "^16.6.0",
     "react-chartjs-2": "^2.7.4",
     "react-dom": "^16.6.0",
     "react-router-dom": "^4.3.1",
-    "reactstrap": "^6.5.0",
-    "sqlite3": "^4.0.6"
+    "reactstrap": "^6.5.0"
   },
   "scripts": {
     "start": "react-scripts start",
