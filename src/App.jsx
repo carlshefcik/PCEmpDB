@@ -19,7 +19,7 @@ class App extends Component {
         <div>
           <Navbar />
 
-          <Switch> {/* connects the the corretly matching paths if nothing then goes to 404 */}
+          <Switch> {/* connects the the corretly matching paths if nothing then goes to 404, which should never happen*/}
             <Route exact path="/" component={Home} />
             <Route exact path="/search" component={Search} />
             <Route exact path="/AddEmp" component={AddEmp} />

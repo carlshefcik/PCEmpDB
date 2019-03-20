@@ -29,7 +29,7 @@ export default class Home extends Component {
             <h1>REDO <code>icpRenderer</code> FOR ALL PAGES</h1>
             <h3>To do list: </h3>
             <p>
-              1. Create pages and navigation <br/>
+              1. (DONE) Create pages and navigation <br/>
               2. Create deployable react build using <code>npm run build</code> and electron-builder<br/>
               3. Create db structure<br/>
               4. Implement functionality on data entry and retrieval<br/>

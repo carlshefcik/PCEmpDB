@@ -27,17 +27,19 @@ export default class About extends Component {
     return (
       <Container>
         <Jumbotron>
-            <h2>About Page</h2>
-
+            <h2>About Page:</h2>
+            <hr/>
             <h3>Instructions:</h3>
             <p>1. Use it</p>
-
+            <hr/>
             <h3>Known bugs:</h3>
             <p>1. None!</p>
-
+            <hr/>
             <h3>Dev Info:</h3>
-            <p>Github: </p>
-            <p>Created by Carl Shefcik</p>
+            <p>
+                Github: https://github.com/carlshefcik/PCEmpDB<br/>
+                Created by Carl Shefcik
+            </p>
 
             <h4>Version</h4>
             <p><strong>0.1:</strong> Initialized pages and created navigation components </p>
