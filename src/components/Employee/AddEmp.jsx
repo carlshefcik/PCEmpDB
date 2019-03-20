@@ -14,10 +14,8 @@ const ipcRenderer  = electron.ipcRenderer;
 
 export default class AddEmp extends Component {
   
-
   componentDidMount() {
     loadPage();
-
     function loadPage(){
       ipcRenderer.send('employee-get', 'ping')
     }

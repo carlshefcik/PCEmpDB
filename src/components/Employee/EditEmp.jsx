@@ -14,8 +14,14 @@ const ipcRenderer  = electron.ipcRenderer;
 
 
 export default class EditEmp extends Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      data: null,
+    };
+  }
   
-
+  //will query db and then do this.setState() to set the values inside the employee form
   componentDidMount() {
     loadPage();
 

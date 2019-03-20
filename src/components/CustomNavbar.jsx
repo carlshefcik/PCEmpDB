@@ -38,14 +38,10 @@ export default class CustomNavbar extends Component {
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="ml-auto" navbar>
               <NavItem>
-                <NavLink >
-                  <Link to="/search">
-                    Go to Search
-                  </Link>
-                </NavLink>
+                <NavLink ><Link to="/search">Search</Link></NavLink>
               </NavItem>
               <NavItem>
-                <NavLink>Temp</NavLink>
+                <NavLink><Link to="/About">About</Link></NavLink>
               </NavItem>
               <UncontrolledDropdown nav inNavbar>
                 <DropdownToggle nav caret>
@@ -53,14 +49,14 @@ export default class CustomNavbar extends Component {
                 </DropdownToggle>
                 <DropdownMenu right>
                   <DropdownItem>
-                    <NavLink href="https://github.com/reactstrap/reactstrap">GitHub</NavLink>
+                    <NavLink href="https://github.com/reactstrap/reactstrap">Reactstrap GitHub</NavLink>
                   </DropdownItem>
                   <DropdownItem>
-                    Option 2
+                    <NavLink href="https://reactstrap.github.io/components/alerts">Reactstrap GitHub Components</NavLink>
                   </DropdownItem>
                   <DropdownItem divider />
                   <DropdownItem>
-                    Reset
+                    v 0.1
                   </DropdownItem>
                 </DropdownMenu>
               </UncontrolledDropdown>
