@@ -1,16 +1,18 @@
 import React, { Component } from 'react';
+
 import {
   Collapse,
   Navbar,
   NavbarToggler,
   NavbarBrand,
   Nav,
-  NavItem,
   NavLink,
+  NavItem,
   UncontrolledDropdown,
   DropdownToggle,
   DropdownMenu,
-  DropdownItem } from 'reactstrap';
+  DropdownItem, } from 'reactstrap';
+import { Link } from 'react-router-dom';
 import './CustomNavbar.css';
 
 export default class CustomNavbar extends Component {
@@ -31,15 +33,19 @@ export default class CustomNavbar extends Component {
     return (
       <div>
         <Navbar color="light" light expand="md">
-          <NavbarBrand href="/">REACTSTRAP NAVBAR</NavbarBrand>
+          <NavbarBrand><Link to="/">DeannaBase</Link></NavbarBrand>
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="ml-auto" navbar>
               <NavItem>
-                <NavLink href="/components/">Components</NavLink>
+                <NavLink >
+                  <Link to="/search">
+                    Go to Search
+                  </Link>
+                </NavLink>
               </NavItem>
               <NavItem>
-                <NavLink href="https://github.com/reactstrap/reactstrap">GitHub</NavLink>
+                <NavLink>Temp</NavLink>
               </NavItem>
               <UncontrolledDropdown nav inNavbar>
                 <DropdownToggle nav caret>
@@ -47,7 +53,7 @@ export default class CustomNavbar extends Component {
                 </DropdownToggle>
                 <DropdownMenu right>
                   <DropdownItem>
-                    Option 1
+                    <NavLink href="https://github.com/reactstrap/reactstrap">GitHub</NavLink>
                   </DropdownItem>
                   <DropdownItem>
                     Option 2

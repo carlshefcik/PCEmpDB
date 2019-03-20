@@ -1,10 +1,15 @@
 import React, { Component } from 'react';
 import './App.css';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Home from './components/Home';
 import Navbar from './components/CustomNavbar';
 import PageNotFound from './components/PageNotFound';
-
+import Home from './components/Home';
+import Search from './components/Search';
+import AddEmp from './components/Employee/AddEmp'
+import EditEmp from './components/Employee/EditEmp'
+import Analytics from './components/Analytics/Analytics'
+import ImportData from './components/ImportData'
+import NewSemester from './components/NewSemester'
 
 class App extends Component {
   render() {
@@ -15,6 +20,12 @@ class App extends Component {
 
           <Switch> {/* connects the the corretly matching paths if nothing then goes to 404 */}
             <Route exact path="/" component={Home} />
+            <Route exact path="/search" component={Search} />
+            <Route exact path="/AddEmp" component={AddEmp} />
+            <Route exact path="/EditEmp" component={EditEmp} />
+            <Route exact path="/Analytics" component={Analytics} />
+            <Route exact path="/Import" component={ImportData} />
+            <Route exact path="/NewSemester" component={NewSemester} />
             <Route component={PageNotFound}/>
           </Switch>
           

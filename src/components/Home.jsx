@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Jumbotron, Container, Button } from 'reactstrap';
+import { Jumbotron, Container, Button, Row, Col } from 'reactstrap';
 import './Home.css';
 
 const electron = window.require('electron');
@@ -9,8 +9,6 @@ const ipcRenderer  = electron.ipcRenderer;
 
 
 export default class Home extends Component {
-  
-
   componentDidMount() {
     loadPage();
 
@@ -28,7 +26,7 @@ export default class Home extends Component {
       <Container>
         <Jumbotron>
             <h2>Peer connections Database Project</h2>
-
+            <h1>REDO <code>icpRenderer</code> FOR ALL PAGES</h1>
             <h3>To do list: </h3>
             <p>
               1. Create pages and navigation <br/>
@@ -49,15 +47,49 @@ export default class Home extends Component {
 
             <hr/>
 
-
             <h4>Sample data retrieval:</h4>
             <p id="dbtest"> </p>
-
-
             
-            <Link to="/">
-              <Button color="primary"> Go to next page </Button>
-            </Link>
+            <hr/>
+
+            <Row>
+              <Col>
+                <Link to="/search">
+                  <Button color="primary">[Temp] Go to Search </Button>
+                </Link>
+              </Col>
+              <Col>
+                <Link to="/AddEmp">
+                  <Button color="primary">[Temp] Add Employee </Button>
+                </Link>
+              </Col>
+              <Col>
+                <Link to="/EditEmp">
+                  <Button color="primary">[Temp] Edit Employee </Button>
+                </Link>
+              </Col>
+            </Row>
+            <br/>
+
+            <Row>
+              <Col>
+                <Link to="/Analytics">
+                  <Button color="primary">[Temp] Analytics </Button>
+                </Link>
+              </Col>
+              <Col>
+                <Link to="/Import">
+                  <Button color="primary">[Temp] Import Data </Button>
+                </Link>
+              </Col>
+              <Col>
+                <Link to="/NewSemester">
+                  <Button color="primary">[Temp] New Semester </Button>
+                </Link>
+              </Col>
+            </Row>
+            
+
         </Jumbotron>
       </Container>
     )
