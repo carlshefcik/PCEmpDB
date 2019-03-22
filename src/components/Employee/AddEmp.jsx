@@ -15,11 +15,11 @@ const ipcRenderer  = electron.ipcRenderer;
 export default class AddEmp extends Component {
   
   componentDidMount() {
-    loadPage();
-    function loadPage(){
-      ipcRenderer.send('employee-get', 'ping')
-    }
-    ipcRenderer.on('employee-reply', (event, arg) => {
+    //loadPage();
+    // function loadPage(){
+    //   ipcRenderer.send('employee-get', 'ping')
+    // }
+    ipcRenderer.once('employee-reply', (event, arg) => {
       document.getElementById('dbtest').innerHTML = arg
       console.log(arg)
     })

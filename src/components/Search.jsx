@@ -9,15 +9,14 @@ const ipcRenderer  = electron.ipcRenderer;
 
 
 export default class Search extends Component {
-  
-
   componentDidMount() {
+    //TODO Load all the current employees to the list on page open
     loadPage();
 
     function loadPage(){
       ipcRenderer.send('employee-get', 'ping')
     }
-    ipcRenderer.on('employee-reply', (event, arg) => {
+    ipcRenderer.once('employee-reply', (event, arg) => {
       document.getElementById('dbtest').innerHTML = arg
       console.log(arg)
     })

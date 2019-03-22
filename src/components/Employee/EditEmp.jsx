@@ -26,9 +26,9 @@ export default class EditEmp extends Component {
     loadPage();
 
     function loadPage(){
-      ipcRenderer.send('employee-get', 'ping')
+      ipcRenderer.send('edit-get', 'edit-ping')
     }
-    ipcRenderer.on('employee-reply', (event, arg) => {
+    ipcRenderer.once('edit-reply', (event, arg) => {
       document.getElementById('dbtest').innerHTML = arg
       console.log(arg)
     })

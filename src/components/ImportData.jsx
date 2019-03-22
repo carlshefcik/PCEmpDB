@@ -10,12 +10,12 @@ const ipcRenderer  = electron.ipcRenderer;
 
 export default class ImportData extends Component {
   componentDidMount() {
-    loadPage();
+    // loadPage();
 
-    function loadPage(){
-      ipcRenderer.send('employee-get', 'ping')
-    }
-    ipcRenderer.on('employee-reply', (event, arg) => {
+    // function loadPage(){
+    //   ipcRenderer.send('employee-get', 'ping')
+    // }
+    ipcRenderer.once('employee-reply', (event, arg) => {
       document.getElementById('dbtest').innerHTML = arg
       console.log(arg)
     })
@@ -33,8 +33,8 @@ export default class ImportData extends Component {
               2. Create db queries <br/>
             </p>
 
-            <h4>Sample data retrieval:</h4>
-            <p id="dbtest"> </p>
+            {/* <h4>Sample data retrieval:</h4>
+            <p id="dbtest"> </p> */}
             
             <Link to="/">
               <Button color="primary"> Go to Home </Button>

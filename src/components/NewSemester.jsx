@@ -15,7 +15,7 @@ export default class NewSemester extends Component {
     function loadPage(){
       ipcRenderer.send('employee-get', 'ping')
     }
-    ipcRenderer.on('employee-reply', (event, arg) => {
+    ipcRenderer.once('employee-reply', (event, arg) => {
       document.getElementById('dbtest').innerHTML = arg
       console.log(arg)
     })

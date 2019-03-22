@@ -13,25 +13,52 @@ const sqlite3 = require('sqlite3').verbose()
 const db = new sqlite3.Database("./Employee.db")
 
 ipcMain.on('employee-get', (event, arg) => {
-  let allEmployees = []
-  db.serialize(function(){
-    db.all('SELECT * FROM Employees', (err, rows)=>{
-      // processes each employee and puts it into an array to be inserted into the front page
-      rows.forEach((e)=>{
-          let employee = []
-          // solution from https://stackoverflow.com/questions/1078118/how-do-i-iterate-over-a-json-structure
-          let obj = e //assigns object in array
-          for (var key in obj){ // key = object attribute name & obj = the object itself
-              var attrName = key // the arributes name is the key
-              var attrValue = obj[key] // how to retireve the obj value
-              employee.push(obj[key])
-          }
-          allEmployees.push(employee)
-      })
-      event.sender.send('employee-reply', allEmployees)
+    console.log(arg);
+    let allEmployees = []
+    db.serialize(function(){
+        db.all('SELECT * FROM Employees', (err, rows)=>{
+            // processes each employee and puts it into an array to be inserted into the front page
+            rows.forEach((e)=>{
+                let employee = []
+                // solution from https://stackoverflow.com/questions/1078118/how-do-i-iterate-over-a-json-structure
+                let obj = e //assigns object in array
+                for (var key in obj){ // key = object attribute name & obj = the object itself
+                    var attrName = key // the arributes name is the key
+                    var attrValue = obj[key] // how to retireve the obj value
+                    employee.push(obj[key])
+                }
+                allEmployees.push(employee)
+            })
+            event.sender.send('employee-reply', allEmployees)
+        })
     })
-  })
 })
+
+// for EditEmp page
+ipcMain.on('edit-get', (event, arg) => {
+    console.log(arg);
+    let allEmployees = []
+    db.serialize(function(){
+        db.all('SELECT * FROM Employees', (err, rows)=>{
+            // processes each employee and puts it into an array to be inserted into the front page
+            rows.forEach((e)=>{
+                let employee = []
+                let obj = e //assigns object in array
+                for (var key in obj){ // key = object attribute name & obj = the object itself
+                    var attrName = key // the arributes name is the key
+                    var attrValue = obj[key] // how to retireve the obj value
+                    employee.push(obj[key])
+                }
+                allEmployees.push(employee)
+            })
+            event.sender.send('edit-reply', allEmployees)
+        })
+    })
+})
+
+
+
+
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -55,6 +82,7 @@ function createWindow() {
         mainWindow = null
     })
 }
+
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

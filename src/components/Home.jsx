@@ -3,22 +3,9 @@ import { Link } from 'react-router-dom';
 import { Jumbotron, Container, Button, Row, Col } from 'reactstrap';
 import './Home.css';
 
-const electron = window.require('electron');
-//const fs = electron.remote.require('fs');
-const ipcRenderer  = electron.ipcRenderer;
-
 
 export default class Home extends Component {
   componentDidMount() {
-    loadPage();
-
-    function loadPage(){
-      ipcRenderer.send('employee-get', 'ping')
-    }
-    ipcRenderer.on('employee-reply', (event, arg) => {
-      document.getElementById('dbtest').innerHTML = arg
-      console.log(arg)
-    })
   }
 
   render() {
@@ -44,11 +31,6 @@ export default class Home extends Component {
 
             <h4>Notes</h4>
             <p>using the <code>&lt;link&gt;</code> tags is like using the <code>&lt;a&gt;</code> tag in react-router-dom</p>
-
-            <hr/>
-
-            <h4>Sample data retrieval:</h4>
-            <p id="dbtest"> </p>
             
             <hr/>
 
