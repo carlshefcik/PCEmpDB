@@ -12,6 +12,7 @@ const sqlite3 = require('sqlite3').verbose()
 // let dbFile = path.join(app.getAppPath(), 'EmployeeDB.db')
 const db = new sqlite3.Database("./Employee.db")
 
+//TODO all these queries need to check if there was anything in the rows before they start trying to access the data
 ipcMain.on('employee-get', (event, arg) => {
     console.log(arg);
     let allEmployees = []

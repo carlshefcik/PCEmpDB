@@ -8,6 +8,7 @@ export default class PageNotFound extends Component {
         <Container>
           <Jumbotron>  
             <h2>404: Page Not Found</h2>
+            <p>Click on the navbar to go to home!</p>
           </Jumbotron>
         </Container>
       </div>

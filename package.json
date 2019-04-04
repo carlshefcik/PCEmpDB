@@ -5,7 +5,17 @@
   "private": true,
   "main": "src/electron.js",
   "homepage": "./",
-
+  "build": {
+    "appId": "PeerConnectionsDB",
+    "extends": null,
+    "files": [
+      "build/**/*",
+      "src/electron.js"
+    ],
+    "directories":{
+      "buildResources": "assets"
+    }
+  },
   "devDependencies": {
     "electron": "^3.0.5",
     "electron-builder": "^20.28.4",
@@ -35,8 +45,7 @@
     "postinstall": "electron-builder install-app-deps",
     "electron-dev": "set ELECTRON_START_URL=http://localhost:3000 && electron .",
     "electron": "electron .",
-    
-    "package-win": "npm run build && electron-builder build --win --x64"
+    "package-win": "npm run build && electron-builder build --win --ia32"
   },
   "eslintConfig": {
     "extends": "react-app"
