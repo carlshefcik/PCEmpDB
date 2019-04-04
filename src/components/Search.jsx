@@ -11,12 +11,15 @@ const ipcRenderer  = electron.ipcRenderer;
 export default class Search extends Component {
   componentDidMount() {
     //TODO Load all the current employees to the list on page open
+    //create data table to be used
     loadPage();
 
     function loadPage(){
-      ipcRenderer.send('employee-get', 'ping')
+      ipcRenderer.send('search-get', 'ping')
     }
-    ipcRenderer.once('employee-reply', (event, arg) => {
+    ipcRenderer.once('search-reply', (event, arg) => {
+      //this will have to insert it into the datatable and generate a url that goes to /EditEmp?id=id
+      //I should have one array of current employees and one of all employees and when the data changes in the search parameter, I just load the correct data to the table
       document.getElementById('dbtest').innerHTML = arg
       console.log(arg)
     })

@@ -3,6 +3,10 @@
 # dependencies
 /node_modules
 
+#deployment
+/dist
+/build
+
 # testing
 /coverage
 
@@ -23,3 +27,4 @@ json_and_json-lock.zip
 node_modules.zip
 Employee.db
 node_modules_2.rar
+Employee1.db

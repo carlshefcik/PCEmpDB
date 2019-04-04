@@ -56,6 +56,28 @@ ipcMain.on('edit-get', (event, arg) => {
     })
 })
 
+// for Search page
+ipcMain.on('search-get', (event, arg) => {
+    console.log(arg);
+    let allEmployees = []
+    db.serialize(function(){
+        db.all('SELECT * FROM Employees', (err, rows)=>{
+            // processes each employee and puts it into an array to be inserted into a results list
+            rows.forEach((e)=>{
+                let employee = []
+                let obj = e //assigns object in array
+                for (var key in obj){ // key = object attribute name & obj = the object itself
+                    var attrName = key // the arributes name is the key
+                    var attrValue = obj[key] // how to retireve the obj value
+                    employee.push(obj[key])
+                }
+                allEmployees.push(employee)
+            })
+            event.sender.send('search-reply', allEmployees)
+        })
+    })
+})
+
 
 
 
@@ -69,7 +91,13 @@ function createWindow() {
     mainWindow = new BrowserWindow({width: 1280, height: 720});
 
     // and load the index.html of the app.
-    mainWindow.loadURL('http://localhost:3000');
+    const startUrl = process.env.ELECTRON_START_URL || url.format({
+        pathname: path.join(__dirname, '/../build/index.html'),
+        protocol: 'file:',
+        slashes: true
+    });
+    mainWindow.loadURL(startUrl);
+    //mainWindow.loadURL('http://localhost:3000');
 
     // Open the DevTools.
     mainWindow.webContents.openDevTools();
