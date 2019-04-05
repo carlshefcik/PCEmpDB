@@ -17,7 +17,7 @@ export default class EditEmp extends Component {
   constructor(props){
     super(props);
     this.state = {
-      data: null,
+      data: []
     };
   }
   
@@ -34,13 +34,17 @@ export default class EditEmp extends Component {
     })
   }
 
+  formSubmission = (dataFromChild) => {
+    console.log(dataFromChild);
+  }
+
   render() {
     return (
       <Container>
         <Jumbotron>
           <h2>Edit Employee</h2>
           <hr/>
-          <EmployeeForm/>
+          <EmployeeForm test={"tesing"} formSubmit={this.formSubmission.bind(this)}/>
         </Jumbotron>
       </Container>
     )

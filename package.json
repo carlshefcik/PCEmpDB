@@ -12,20 +12,22 @@
       "build/**/*",
       "src/electron.js"
     ],
-    "directories":{
+    "directories": {
       "buildResources": "assets"
     }
   },
   "devDependencies": {
     "electron": "^3.0.5",
-    "electron-builder": "^20.28.4",
+    "electron-builder": "^20.40.0",
     "electron-packager": "^12.1.2",
-    "react-scripts": "2.0.5"
+    "react-scripts": "^2.1.8"
   },
   "dependencies": {
     "bootstrap": "^4.1.3",
     "chart.js": "^2.7.3",
     "cors": "^2.8.5",
+    "datatables.net": "^1.10.19",
+    "datatables.net-bs4": "^1.10.19",
     "express": "^4.16.4",
     "jquery": "^3.3.1",
     "mysql": "^2.16.0",

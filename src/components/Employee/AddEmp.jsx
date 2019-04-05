@@ -25,13 +25,17 @@ export default class AddEmp extends Component {
     })
   }
 
+  myCallback = (dataFromChild) => {
+    console.log(dataFromChild);
+  }
+
   render() {
     return (
       <Container>
         <Jumbotron>
           <h2>Add Employee</h2>
           <hr/>
-          <EmployeeForm/>
+          <EmployeeForm cb={this.myCallback}/>
         </Jumbotron>
       </Container>
     )
