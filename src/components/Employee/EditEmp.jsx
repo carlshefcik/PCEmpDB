@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 // eslint-disable-next-line
 import { Link } from 'react-router-dom';
 // eslint-disable-next-line
-import { Jumbotron, Container, Button } from 'reactstrap';
+import { Jumbotron, Container, Button, Row, Col, Input } from 'reactstrap';
 // import './Home.css';
 
 import EmployeeForm from "./EmployeeForm"
@@ -41,7 +41,7 @@ export default class EditEmp extends Component {
       //this should be a function that sets the data in the employee form
       this.setState({data: arg})
       this.refs.data_table.fillForm(arg);
-      console.log(arg)
+      //console.log(arg)
     })
 
     
@@ -55,20 +55,32 @@ export default class EditEmp extends Component {
     return (
       <Container>
         <Jumbotron>
-          <h2>Edit Employee</h2>
-          <h2>Employee Form</h2>
 
+          <Row>
+            <Col>
+              <h1>Edit Employee:</h1>
+            </Col>
+            <Col md={4} sm={6}>
+              <h4>Semester: </h4>
+              <Input type="select" bsSize="sm">
+                <option>Semester</option>
+              </Input>
+            </Col>
+          </Row>
+          <hr/>
+          <EmployeeForm ref="data_table" onRef={ref => (this.dataTable = ref)} test={"tesing"} formSubmit={this.formSubmission.bind(this)}/>
+          <br/>
+          <Link to="/">
+            <Button color="primary"> Go to Home </Button>
+          </Link>
+          <br/><br/>
           <h3>To do list: </h3>
           <p>
             1. Create form <br/>
             2. Create this.state values to use this.props values when given that pass into it to load the form<br/>
             3. Figure out how to access the form data from the AddEmp and EditEmp pages
           </p>
-          <hr/>
-          <EmployeeForm ref="data_table" onRef={ref => (this.dataTable = ref)} test={"tesing"} formSubmit={this.formSubmission.bind(this)}/>
-          <Link to="/">
-            <Button color="primary"> Go to Home </Button>
-          </Link>
+
         </Jumbotron>
       </Container>
     )
