@@ -13,7 +13,8 @@ db.serialize(function(){
     db.run('CREATE TABLE IF NOT EXISTS semester_summary (semester_id INTEGER PRIMARY KEY AUTOINCREMENT, semester varchar(5), year NUMBER(4), emp_tbl_name TEXT, tutor_tbl_name TEXT, mentor_tbl_name TEXT, si_tbl_name TEXT)')
     
     //employees table just holds all the info for every employee that has been at peer connections. (maybe also some info from)
-    db.run('CREATE TABLE IF NOT EXISTS employees (person_id INTEGER PRIMARY KEY AUTOINCREMENT, sid TEXT, last_name TEXT, first_name TEXT, employed INTEGER)')
+    db.run('CREATE TABLE IF NOT EXISTS employees (person_id INTEGER PRIMARY KEY AUTOINCREMENT, sid TEXT, last_name TEXT, first_name TEXT, employed INTEGER, current_role INTEGER)')
+
     //this is a semester specific table that holds info on the semetser, points to other tables but only semester_overview table points to it
     //phone number?
     //I think I will have to have the training levels all in here.
@@ -42,16 +43,22 @@ db.serialize(function(){
 
 
     // insert command
-    db.run('INSERT INTO employees (sid, last_name, first_name, employed) VALUES ("010517091", "Shefcik", "Carl", 1)')
-    db.run('INSERT INTO employees_spring_2019 (sid, last_name, first_name, preferred_name, pronouns, email, shirt_size, grad_date, major, college, undergrad, international, role, semester_start, hire_status, schedule_sent, evc_date, pay_rate, leave_date, leave_reason, training_levels, certifications, courses, languages, strengths, special_interests) VALUES ("010517091", "Shefcik", "Carl", "Carl", 1, "carl.shefcik@sjsu.edu", 2, "Spring 2020", "Software Engineering", "Engineering", 1, 0, 0, "Fall 2017", "Good?", "1", "date format", "14", "", "", "SI level 2", "", "array pointing to class ids", "English", "strengths", "memes")')
+    // db.run('INSERT INTO employees (sid, last_name, first_name, employed, current_role) VALUES ("010517091", "Shefcik", "Carl", 1, 3)')
+    // db.run('INSERT INTO employees (sid, last_name, first_name, employed, current_role) VALUES ("123456789", "Naeem", "Sonnan", 0, 0)')
+    // db.run('INSERT INTO employees_spring_2019 (sid, last_name, first_name, preferred_name, pronouns, email, shirt_size, grad_date, major, college, undergrad, international, role, semester_start, hire_status, schedule_sent, evc_date, pay_rate, leave_date, leave_reason, training_levels, certifications, courses, languages, strengths, special_interests) VALUES ("010517091", "Shefcik", "Carl", "Carl", 1, "carl.shefcik@sjsu.edu", 2, "Spring 2020", "Software Engineering", "Engineering", 1, 0, 0, "Fall 2017", "Good?", "1", "date format", "14", "", "", "SI level 2", "", "array pointing to class ids", "English", "strengths", "memes")')
 
     // delete command
     // db.run('DELETE FROM Employees')
 
-    db.all('SELECT * FROM employees', (err, rows)=>{
-        console.log(rows)
-    })
-    db.all('SELECT * FROM employees_spring_2019', (err, rows)=>{
+    // db.all('SELECT * FROM employees', (err, rows)=>{
+    //     console.log(rows)
+    // })
+    // db.all('SELECT * FROM employees_spring_2019', (err, rows)=>{
+    //     console.log(rows)
+    // })
+
+
+    db.all("SELECT * FROM employees WHERE first_name LIKE '%Carl%' AND employed=1", (err, rows)=>{
         console.log(rows)
     })
 })

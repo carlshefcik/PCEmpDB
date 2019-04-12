@@ -42,7 +42,11 @@ export default class About extends Component {
             </p>
 
             <h4>Version</h4>
-            <p><strong>0.1:</strong> Initialized pages and created navigation components </p>
+            <p>
+              <strong>0.3:</strong> Using sid on search results to get to the edit page that queries the DB for the info<br/>
+              <strong>0.2:</strong> Completed initial DB ERD and created search page functionality <br/>
+              <strong>0.1:</strong> Initialized pages and created navigation components
+            </p>
 
 
             <Link to="/">

@@ -17,7 +17,7 @@ ipcMain.on('employee-get', (event, arg) => {
     console.log(arg);
     let allEmployees = []
     db.serialize(function(){
-        db.all('SELECT * FROM Employees', (err, rows)=>{
+        db.all('SELECT * FROM employees', (err, rows)=>{
             // processes each employee and puts it into an array to be inserted into the front page
             rows.forEach((e)=>{
                 let employee = []
@@ -37,10 +37,13 @@ ipcMain.on('employee-get', (event, arg) => {
 
 // for EditEmp page
 ipcMain.on('edit-get', (event, arg) => {
-    console.log(arg);
+    //TODO I think it should get the employee and search their id in every semester table and return all the tables they are in and the front will load the most recent semester and say what semester with a large selector at the top
+
+    let dbString = 'SELECT * FROM employees WHERE sid="'+arg+'"'
+    console.log(dbString)
     let allEmployees = []
     db.serialize(function(){
-        db.all('SELECT * FROM Employees', (err, rows)=>{
+        db.all(dbString, (err, rows)=>{
             // processes each employee and puts it into an array to be inserted into the front page
             rows.forEach((e)=>{
                 let employee = []
@@ -60,9 +63,37 @@ ipcMain.on('edit-get', (event, arg) => {
 // for Search page
 ipcMain.on('search-get', (event, arg) => {
     console.log(arg);
+    //TODO parse the params and build a correct query
+    //this is searching for first name
+    let dbString = 'SELECT * FROM employees'
+    if(arg[4]){ dbString +=' WHERE employed=1' } else { dbString +=' WHERE employed=0' }
+    //this should check if we are searching by firstname, lastname, or SID
+    if(arg[0]) { //checks to see if there is a search value
+        if(arg[5] === 1){
+            dbString += ' AND first_name LIKE "%'+arg[0]+'%"'
+        } else if (arg[5] === 2){
+            dbString += ' AND last_name LIKE "%'+arg[0]+'%"'
+        } else if (arg[5] === 3) {
+            dbString += ' AND sid LIKE "%'+arg[0]+'%"'
+        }
+    }
+    
+    if(arg[1]){ dbString += ' AND current_role=0' }
+    //TODO this needs to know if there was something before so it just adds an or
+    if(arg[2]){
+        if(arg[1]){ dbString += ' OR current_role=1' } else { dbString += ' AND current_role=1' }
+    }
+    if(arg[3]){
+        if(arg[1] || arg[2]){ dbString += ' OR current_role=2' } else { dbString += ' AND current_role=2' }
+    }
+    //checks to see if we want employed or not
+    
+    console.log(dbString)
+
     let allEmployees = []
     db.serialize(function(){
-        db.all('SELECT * FROM Employees', (err, rows)=>{
+        //this gets all employees that are employed
+        db.all(dbString, (err, rows)=>{
             // processes each employee and puts it into an array to be inserted into a results list
             rows.forEach((e)=>{
                 let employee = []

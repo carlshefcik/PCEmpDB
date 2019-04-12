@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
+// eslint-disable-next-line
 import { Link } from 'react-router-dom';
-import { Jumbotron, Container, Button } from 'reactstrap';
+import { Jumbotron, Container, Button, Form, FormGroup, Input, Row, Col, CustomInput } from 'reactstrap';
 
 // eslint-disable-next-line
 import bootstrap from "bootstrap"
@@ -28,65 +29,17 @@ export default class Search extends Component {
     super(props);
     this.state = {
       employed: [],
-      allStaff: [],
-      emptoggle: true,
-      test: []
+      oldStaff: [],
     }
   }
   componentDidMount() {
-    //TODO Load all the current employees to the list on page open
-    loadPage();
-
-    function loadPage(){
-      ipcRenderer.send('search-get', 'ping')
-    }
-    ipcRenderer.once('search-reply', (event, arg) => {
-      //this will have to insert it into the datatable and generate a url that goes to /EditEmp?id=id
-      //I should have one array of current employees and one of all employees and when the data changes in the search parameter, I just load the correct data to the table
-      this.setState(state => ({test: arg}));
-      console.log(arg)
-    })
-    //for some reason the first call of this function doesnt toggle it
-    this.empToggle()
-  }
-
-  empToggle = () =>{
-    this.setState(state => { return { emptoggle: !state.emptoggle }});
-    console.log(this.state)
-    if(this.state.emptoggle){
-      this.dataTable.setEmployed()
-    } else {
-      this.dataTable.setAllStaff()
-    }
   }
 
   render() {
     return (
       <Container>
         <Jumbotron>
-            <h2>SEARCH PAGE</h2>
-
-            <h3>To do list: </h3>
-            <p>
-              1. Create page layout <br/>
-              2. Create db queries <br/>
-            </p>
-
-            <h4>Notes</h4>
-            <p>using the <code>&lt;link&gt;</code> tags is like using the <code>&lt;a&gt;</code> tag in react-router-dom</p>
-
-            <hr/>
-            <Button color="danger" onClick={this.empToggle}> Search </Button>
-
-            <DataTable onRef={ref => (this.dataTable = ref)} employed={this.state.employed} allStaff={this.state.allStaff}/>
-
-
-            <h4>Sample data retrieval:</h4>
-            <p>{this.state.test}</p>
-            
-            <Link to="/">
-              <Button color="primary"> Go to Home </Button>
-            </Link>
+          <DataTable onRef={ref => (this.dataTable = ref)} employed={this.state.employed} oldStaff={this.state.oldStaff}/>            
         </Jumbotron>
       </Container>
     )
@@ -97,68 +50,181 @@ class DataTable extends Component {
   constructor(props){
     super(props);
     this.state = {
-      data: []
+      search_val: '',
+      search_tutor: false,
+      search_mentor: false,
+      search_si : false,
+      search_employed: true,
+      search_option: 1,
+      employed: [],
+      oldStaff: [],
+      dataTable: null
     }
   }
+
   componentDidMount() {
-    this.props.onRef(this)
-    // const columns = [
-    //   {
-    //       title: 'Name',
-    //       width: 120,
-    //       data: 'name'
-    //   },
-    //   {
-    //       title: 'Nickname',
-    //       width: 180,
-    //       data: 'nickname'
-    //   },
-    // ];
-    //call datatable on it
-    $(this.refs.table_id).DataTable({
+    //this.props.onRef(this)
+
+    //initialize datatable
+    let table = $(this.refs.table_id).DataTable({
       paging: false,
-      info: false
+      info: false,
+      searching: false
     })
+    //this didnt work, need to wait for promise
+    this.setState({dataTable: table})
+    //console.log(this.state.dataTable)
+
+    //TODO Load all the current employees to the list on page open
+    this.searchDB()
+
+    //can i set these up to get replies indefinitely here, I think so right?
+    ipcRenderer.on('search-reply', (event, arg) => {
+      //this will have to insert it into the datatable and generate a url that goes to /EditEmp?id=id
+      //I should have one array of current employees and one of all employees and when the data changes in the search parameter, I just load the correct data to the table
+
+      this.clearTable(table)
+      this.setState({employed: arg})
+      //need to add from here or use promise
+      if(arg){ //checks to see that there was a query result
+        this.addRows(table, arg)
+      }
+      //console.log(this.state.employed)
+    })
+
   }
+
+
   componentWillUnmount() {
-    this.props.onRef(null)
+    //this.props.onRef(null)
+    ipcRenderer.removeAllListeners('search-reply')
   }
-  setEmployed = () =>{
-    console.log("emp")
-    this.setState({data: this.props.employed})
+
+  //adds the given rows to the table
+  addRows = (table, data) => {
+    for(let i = 0; i < data.length; i++){
+      let role = ''
+      if(data[i][5] === 0) {role = 'Tutor'} else if (data[i][5] === 1) { role = 'Mentor'} else if (data[i][5] === 2) { role = 'SI'} else if (data[i][5] === 3) { role = 'WDSK'}
+      this.addRow(table, data[i][3], data[i][2], data[i][1], role)
+    }
+    table.draw();
+    //console.log(this.state.dataTable)
   }
-  setAllStaff = () => {
-    console.log("allstaff")
-    this.setState({data: this.props.allStaff})
+
+  //adds the data but needs to be redrawn
+  addRow = (table, firstName, lastName, sid, role) => {
+    let tr = document.createElement('tr')
+    let td1 = document.createElement('td')
+    td1.innerHTML = firstName
+    let td2 = document.createElement('td')
+    td2.innerHTML = lastName
+    let td3 = document.createElement('td')
+    td3.innerHTML = sid
+    let td4 = document.createElement('td')
+    td4.innerHTML = role
+    tr.appendChild(td1)
+    tr.appendChild(td2)
+    tr.appendChild(td3)
+    tr.appendChild(td4)
+    let td5 = document.createElement('td')
+    let link = document.createElement('a')
+    link.setAttribute('href', "/EditEmp?sid="+sid)
+    let button = document.createElement('button')
+    button.setAttribute('class', 'btn btn-primary btn-sm')
+    button.innerHTML = 'Info'
+    link.appendChild(button)
+    td5.appendChild(link)
+    tr.appendChild(td5)
+    table.row.add(tr)
+  }
+
+  clearTable = (table) => {
+    table.clear().draw();
+  }
+
+  searchDB = () =>{
+    //get the the search param state
+    let searchParams = []
+    searchParams.push(this.state.search_val)
+    searchParams.push(this.state.search_tutor)
+    searchParams.push(this.state.search_mentor)
+    searchParams.push(this.state.search_si)
+    searchParams.push(this.state.search_employed)
+    searchParams.push(this.state.search_option)
+    //look in the db, the reply will be pased by the icpRenderer
+    ipcRenderer.send('search-get', searchParams)
   }
   
-  //create data table to be used
-  method = () =>{
-    //this might not be needed as state changes re render components. 
-    //we can have the datatable render be apart of this
-    console.log("got call")
+  onFormSubmit = (e) => {
+    e.preventDefault()
+    console.log("submitted")
+    console.log(this.state)
+    //search the db with the params
+    this.searchDB();
   }
+
+
   render() {
-    
+    //let element = React.createElement('Button', { children:"test"});
     return (
       <div>
-        <h1>Datatable</h1>
+        <Form onSubmit={this.onFormSubmit}>
+          <Row form>
+            <Col md={10} sm={9}>
+              <FormGroup>
+                <Input bsSize="lg" type="text" name="serach_input" id="search_input_id" placeholder="Search Employees..." value={this.state.search_val} onChange={e => this.setState({search_val: e.target.value})}/>
+              </FormGroup>
+            </Col>
+            <Col md={2} sm={3}>
+              <FormGroup>
+                {/* textright doesnt work */}
+                <Button type="submit" className="text-center" color="primary" size="lg" block>Search</Button>
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row form>
+            <Col md={6} sm={12}>
+              <FormGroup>
+                <div>
+                  <CustomInput inline type="radio" id="customRadio" name="customRadio" label="First Name" value={1} checked={this.state.search_option === 1} onChange={e => this.setState({search_option: 1})} />
+                  <CustomInput inline type="radio" id="customRadio2" name="customRadio" label="Last Name" value={2} checked={this.state.search_option === 2} onChange={e => this.setState({search_option: 2})} />
+                  <CustomInput inline type="radio" id="customRadio3" name="customRadio" label="SID" value={3} checked={this.state.search_option === 3} onChange={e => this.setState({search_option: 3})} />
+                </div>
+              </FormGroup>
+            </Col>
+            <Col md={6} sm={12}>
+              <FormGroup>
+                <div>
+                  <CustomInput type="checkbox" id="tutor_check_id" label="Tutor" inline checked={this.state.search_tutor} onChange={e => this.setState({search_tutor: !this.state.search_tutor})}/>
+                  <CustomInput type="checkbox" id="mentor_check_id" label="Mentor" inline checked={this.state.search_mentor} onChange={e => this.setState({search_mentor: !this.state.search_mentor})}/>
+                  <CustomInput type="checkbox" id="si_check_id" label="SI" inline checked={this.state.search_si} onChange={e => this.setState({search_si: !this.state.search_si})}/>
+                  <CustomInput type="checkbox" id="employed_check_id" label="Currently Employed" inline checked={this.state.search_employed} onChange={e => this.setState({search_employed: !this.state.search_employed})}/>
+                </div>
+              </FormGroup>
+            </Col>
+          </Row>
+        </Form>
+        <hr/>
+
         <table ref="table_id" class="table table-striped table-hover table-sm">
           <thead class="thead-dark">
             <tr>
-              <th>SID</th>
               <th>Firstname</th>
               <th>Lastname</th>
+              <th>SID</th>
               <th>Role</th>
+              <th>Info</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>1</td>
-              <td>2</td>
-              <td>3</td>
-              <td>4</td>
-            </tr>
+            {/* <td>
+              <tr>1</tr>
+              <tr>1</tr>
+              <tr>1</tr>
+              <tr>1</tr>
+              <tr>
+              </tr>
+            </td> */}
           </tbody>
         </table>
       </div>

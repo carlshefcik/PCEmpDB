@@ -46,8 +46,8 @@ export default class Home extends Component {
                 </Link>
               </Col>
               <Col>
-                <Link to="/EditEmp">
-                  <Button color="primary">[Temp] Edit Employee </Button>
+                <Link to="/">
+                  <Button color="primary" disabled>[Temp] Edit Employee </Button>
                 </Link>
               </Col>
             </Row>
