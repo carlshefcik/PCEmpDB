@@ -12,6 +12,19 @@ const sqlite3 = require('sqlite3').verbose()
 // let dbFile = path.join(app.getAppPath(), 'EmployeeDB.db')
 const db = new sqlite3.Database("./Employee.db")
 
+//global variable for the pages that is loaded on open and when new semseters are added (rare)
+let semesters = []
+refreshSemesters()
+function refreshSemesters(){
+    //gets all the semesters and puts them into an array
+    db.all('SELECT emp_tbl_name FROM semester_list', (err,rows)=>{
+        rows.forEach((e)=>{
+            semesters.push(e['emp_tbl_name'])
+        })
+    })
+}
+
+
 //TODO all these queries need to check if there was anything in the rows before they start trying to access the data (especially the semester specific ones)
 ipcMain.on('employee-get', (event, arg) => {
     console.log(arg);
@@ -35,28 +48,55 @@ ipcMain.on('employee-get', (event, arg) => {
     })
 })
 
+
 // for EditEmp page
 ipcMain.on('edit-get', (event, arg) => {
     //TODO I think it should get the employee and search their id in every semester table and return all the tables they are in and the front will load the most recent semester and say what semester with a large selector at the top
+    
+    //1. get a list of all the semesters
+    //2. see if the person was there in every one of the semester tables
+    //3. if so add to return value
 
-    let dbString = 'SELECT * FROM employees WHERE sid="'+arg+'"'
-    console.log(dbString)
-    let allEmployees = []
+    let semesterInfo = []
     db.serialize(function(){
-        db.all(dbString, (err, rows)=>{
-            // processes each employee and puts it into an array to be inserted into the front page
-            rows.forEach((e)=>{
-                let employee = []
-                let obj = e //assigns object in array
-                for (var key in obj){ // key = object attribute name & obj = the object itself
-                    var attrName = key // the arributes name is the key
-                    var attrValue = obj[key] // how to retireve the obj value
-                    employee.push(obj[key])
-                }
-                allEmployees.push(employee)
-            })
-            event.sender.send('edit-reply', allEmployees)
+        //gets all the semesters and puts them into an array
+        let semesters = []
+        db.each('SELECT emp_tbl_name FROM semester_list', (err,row)=>{
+            semesters.push(row['emp_tbl_name'])
+        }, () =>{ //called once db.each() finishes
+            getInfo()
         })
+
+        function getInfo() {
+            let count=0
+            semesters.forEach(semName => {
+                let dbString = 'SELECT * FROM '+semName+' WHERE sid="'+arg+'"'
+                console.log(dbString)
+                db.each(dbString, (err, row)=>{ // should only give one row
+                    if(row){
+                        let empInfo = []
+                        let obj = row //assigns object in array
+                        empInfo.push(semName)
+                        for (var key in obj){ // key = object attribute name & obj = the object itself
+                            var attrName = key // the arributes name is the key
+                            var attrValue = obj[key] // how to retireve the obj value
+                            empInfo.push(obj[key])
+                        }
+                        semesterInfo.push(empInfo)
+                    }
+                    
+                }, () => {
+                    //promise, calls once db query completes
+                    if(count === semesters.length-1){
+                        sendResult()
+                    } else { count++ }
+                })
+            })
+        }
+        
+        function sendResult() {
+            event.sender.send('edit-reply', semesterInfo)
+        }
     })
 })
 
@@ -90,7 +130,7 @@ ipcMain.on('search-get', (event, arg) => {
     
     console.log(dbString)
 
-    let allEmployees = []
+    let searchResults = []
     db.serialize(function(){
         //this gets all employees that are employed
         db.all(dbString, (err, rows)=>{
@@ -103,9 +143,9 @@ ipcMain.on('search-get', (event, arg) => {
                     var attrValue = obj[key] // how to retireve the obj value
                     employee.push(obj[key])
                 }
-                allEmployees.push(employee)
+                searchResults.push(employee)
             })
-            event.sender.send('search-reply', allEmployees)
+            event.sender.send('search-reply', searchResults)
         })
     })
 })
@@ -156,6 +196,7 @@ app.on('window-all-closed', function () {
     if (process.platform !== 'darwin') {
         app.quit()
     }
+    db.close()
 });
 
 app.on('activate', function () {

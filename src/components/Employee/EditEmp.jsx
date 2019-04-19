@@ -40,8 +40,12 @@ export default class EditEmp extends Component {
 
       //this should be a function that sets the data in the employee form
       this.setState({data: arg})
-      this.refs.data_table.fillForm(arg);
-      //console.log(arg)
+      if(arg.length !== 0){
+        this.refs.emp_form.fillForm(arg);
+      } else { 
+        console.log('no data for employee')
+      }
+      
     })
 
     
@@ -68,7 +72,7 @@ export default class EditEmp extends Component {
             </Col>
           </Row>
           <hr/>
-          <EmployeeForm ref="data_table" onRef={ref => (this.dataTable = ref)} test={"tesing"} formSubmit={this.formSubmission.bind(this)}/>
+          <EmployeeForm ref="emp_form" onRef={ref => (this.emp_form = ref)} test={"tesing"} formSubmit={this.formSubmission.bind(this)}/>
           <br/>
           <Link to="/">
             <Button color="primary"> Go to Home </Button>

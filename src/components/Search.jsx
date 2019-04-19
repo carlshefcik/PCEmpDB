@@ -56,9 +56,10 @@ class DataTable extends Component {
       search_si : false,
       search_employed: true,
       search_option: 1,
-      employed: [],
-      oldStaff: [],
-      dataTable: null
+      // employed: [],
+      // oldStaff: [],
+      dataTable: null,
+      data: [[1,2,3],[1,2,3]] // needs temp for some reason
     }
   }
 
@@ -66,13 +67,15 @@ class DataTable extends Component {
     //this.props.onRef(this)
 
     //initialize datatable
-    let table = $(this.refs.table_id).DataTable({
+    // let table = 
+    $(this.refs.table_id).DataTable({
       paging: false,
       info: false,
       searching: false
     })
-    //this didnt work, need to wait for promise
-    this.setState({dataTable: table})
+
+    //this didnt work, need to wait for promise for immediate use on load
+    // this.setState({dataTable: table})
     //console.log(this.state.dataTable)
 
     //TODO Load all the current employees to the list on page open
@@ -80,66 +83,16 @@ class DataTable extends Component {
 
     //can i set these up to get replies indefinitely here, I think so right?
     ipcRenderer.on('search-reply', (event, arg) => {
-      //this will have to insert it into the datatable and generate a url that goes to /EditEmp?id=id
-      //I should have one array of current employees and one of all employees and when the data changes in the search parameter, I just load the correct data to the table
-
-      this.clearTable(table)
-      this.setState({employed: arg})
-      //need to add from here or use promise
-      if(arg){ //checks to see that there was a query result
-        this.addRows(table, arg)
-      }
-      //console.log(this.state.employed)
+      //this.setState({employed: arg})
+      this.setState({data: arg})
+      // console.log('Search Success! Loading Results...')
     })
 
   }
 
-
   componentWillUnmount() {
     //this.props.onRef(null)
     ipcRenderer.removeAllListeners('search-reply')
-  }
-
-  //adds the given rows to the table
-  addRows = (table, data) => {
-    for(let i = 0; i < data.length; i++){
-      let role = ''
-      if(data[i][5] === 0) {role = 'Tutor'} else if (data[i][5] === 1) { role = 'Mentor'} else if (data[i][5] === 2) { role = 'SI'} else if (data[i][5] === 3) { role = 'WDSK'}
-      this.addRow(table, data[i][3], data[i][2], data[i][1], role)
-    }
-    table.draw();
-    //console.log(this.state.dataTable)
-  }
-
-  //adds the data but needs to be redrawn
-  addRow = (table, firstName, lastName, sid, role) => {
-    let tr = document.createElement('tr')
-    let td1 = document.createElement('td')
-    td1.innerHTML = firstName
-    let td2 = document.createElement('td')
-    td2.innerHTML = lastName
-    let td3 = document.createElement('td')
-    td3.innerHTML = sid
-    let td4 = document.createElement('td')
-    td4.innerHTML = role
-    tr.appendChild(td1)
-    tr.appendChild(td2)
-    tr.appendChild(td3)
-    tr.appendChild(td4)
-    let td5 = document.createElement('td')
-    let link = document.createElement('a')
-    link.setAttribute('href', "/EditEmp?sid="+sid)
-    let button = document.createElement('button')
-    button.setAttribute('class', 'btn btn-primary btn-sm')
-    button.innerHTML = 'Info'
-    link.appendChild(button)
-    td5.appendChild(link)
-    tr.appendChild(td5)
-    table.row.add(tr)
-  }
-
-  clearTable = (table) => {
-    table.clear().draw();
   }
 
   searchDB = () =>{
@@ -157,14 +110,30 @@ class DataTable extends Component {
   
   onFormSubmit = (e) => {
     e.preventDefault()
-    console.log("submitted")
-    console.log(this.state)
+    // console.log("Searching...")
+    // console.log(this.state)
     //search the db with the params
     this.searchDB();
   }
 
 
   render() {
+
+    //this creates the info inside the datatable
+    let items = this.state.data.map(rowData => {
+      let role = ''
+      if(rowData[5] === 0) {role = 'Tutor'} else if (rowData[5] === 1) { role = 'Mentor'} else if (rowData[5] === 2) { role = 'SI'} else if (rowData[5] === 3) { role = 'WDSK'}
+      return (
+        <tr>
+          <td>{rowData[3]}</td>
+          <td>{rowData[2]}</td>
+          <td>{rowData[1]}</td>
+          <td>{role}</td>
+          <td><Link to={"./EditEmp?sid="+rowData[1]}><Button color='primary' size='sm'>Info</Button></Link></td>
+        </tr>
+      )
+    })
+
     //let element = React.createElement('Button', { children:"test"});
     return (
       <div>
@@ -205,8 +174,7 @@ class DataTable extends Component {
           </Row>
         </Form>
         <hr/>
-
-        <table ref="table_id" class="table table-striped table-hover table-sm">
+        <table ref='table_id' class="table table-striped table-hover table-sm">
           <thead class="thead-dark">
             <tr>
               <th>Firstname</th>
@@ -217,16 +185,14 @@ class DataTable extends Component {
             </tr>
           </thead>
           <tbody>
-            {/* <td>
-              <tr>1</tr>
-              <tr>1</tr>
-              <tr>1</tr>
-              <tr>1</tr>
-              <tr>
-              </tr>
-            </td> */}
+            {items}
+            {/* I think I will have to have it map a state object here from the results 
+            and that is changed with the state and 
+            I will delete the table and re initialize it and it will put what was here there allowing react elements */}
           </tbody>
         </table>
+        <hr/>
+        <Button onClick={e => console.log(this.state)}>log state</Button>
       </div>
       
     )

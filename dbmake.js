@@ -18,7 +18,7 @@ db.serialize(function(){
     //this is a semester specific table that holds info on the semetser, points to other tables but only semester_overview table points to it
     //phone number?
     //I think I will have to have the training levels all in here.
-    db.run('CREATE TABLE IF NOT EXISTS employees_spring_2019 (person_id INTEGER PRIMARY KEY AUTOINCREMENT, sid TEXT, last_name TEXT, first_name TEXT, preferred_name TEXT, pronouns INTEGER, email TEXT, shirt_size INTEGER, grad_date TEXT, major TEXT, college TEXT, undergrad INTEGER, international INTEGER, role INTEGER, semester_start TEXT, hire_status TEXT, schedule_sent INTEGER, evc_date TEXT, pay_rate TEXT, leave_date TEXT, leave_reason TEXT, training_levels TEXT, certifications TEXT, courses TEXT, languages TEXT, strengths TEXT, special_interests TEXT)')
+    db.run('CREATE TABLE IF NOT EXISTS employees_spring_2019 (person_id INTEGER PRIMARY KEY AUTOINCREMENT, sid TEXT, last_name TEXT, first_name TEXT, preferred_name TEXT, pronouns INTEGER, email TEXT, phone_number TEXT, shirt_size INTEGER, grad_date TEXT, major TEXT, college TEXT, undergrad INTEGER, international INTEGER, role INTEGER, semester_start TEXT, hire_status TEXT, schedule_sent INTEGER, evc_date TEXT, pay_rate TEXT, leave_date TEXT, leave_reason TEXT, training_levels TEXT, certifications TEXT, avg_hours_wk TEXT, courses TEXT, languages TEXT, strengths TEXT, special_interests TEXT)')
     //pronouns: 0=other, 1= male, 2=female
     //shirt size: 0 1 2 3 4 5 6 7 8 
     //undergrad: 0 1
@@ -42,10 +42,14 @@ db.serialize(function(){
     // db.run('CREATE TABLE IF NOT EXISTS si_classes_spring_2019 (person_id INTEGER PRIMARY KEY AUTOINCREMENT, last_name varchar(255), first_name varchar(255))')
 
 
+    //TODO have teh Learning assistants and WDSK AS selections
+
     // insert command
-    // db.run('INSERT INTO employees (sid, last_name, first_name, employed, current_role) VALUES ("010517091", "Shefcik", "Carl", 1, 3)')
-    // db.run('INSERT INTO employees (sid, last_name, first_name, employed, current_role) VALUES ("123456789", "Naeem", "Sonnan", 0, 0)')
-    // db.run('INSERT INTO employees_spring_2019 (sid, last_name, first_name, preferred_name, pronouns, email, shirt_size, grad_date, major, college, undergrad, international, role, semester_start, hire_status, schedule_sent, evc_date, pay_rate, leave_date, leave_reason, training_levels, certifications, courses, languages, strengths, special_interests) VALUES ("010517091", "Shefcik", "Carl", "Carl", 1, "carl.shefcik@sjsu.edu", 2, "Spring 2020", "Software Engineering", "Engineering", 1, 0, 0, "Fall 2017", "Good?", "1", "date format", "14", "", "", "SI level 2", "", "array pointing to class ids", "English", "strengths", "memes")')
+    db.run('INSERT INTO employees (sid, last_name, first_name, employed, current_role) VALUES ("010517091", "Shefcik", "Carl", 1, 3)')
+    db.run('INSERT INTO employees (sid, last_name, first_name, employed, current_role) VALUES ("123456789", "Naeem", "Sonnan", 0, 0)')
+    db.run('INSERT INTO employees_spring_2019 (sid, last_name, first_name, preferred_name, pronouns, email, phone_number, shirt_size, grad_date, major, college, undergrad, international, role, semester_start, hire_status, schedule_sent, evc_date, pay_rate, leave_date, leave_reason, training_levels, certifications, avg_hours_wk, courses, languages, strengths, special_interests) VALUES ("010517091", "Shefcik", "Carl", "Carl", 1, "carl.shefcik@sjsu.edu", "619-846-3775", 2, "Spring 2020", "Software Engineering", "Engineering", 1, 0, 3, "Fall 2017", "Good?", "1", "date format", "14", "", "", "SI level 2", "", "15.75", "array pointing to class ids", "English", "strengths", "memes")')
+    db.run('INSERT INTO semester_list (semester, year, emp_tbl_name) VALUES ("Spring", 2019, "employees_spring_2019")')
+
 
     // delete command
     // db.run('DELETE FROM Employees')
@@ -53,14 +57,70 @@ db.serialize(function(){
     // db.all('SELECT * FROM employees', (err, rows)=>{
     //     console.log(rows)
     // })
-    // db.all('SELECT * FROM employees_spring_2019', (err, rows)=>{
+    db.all('SELECT * FROM employees_spring_2019 WHERE sid="010517091"', (err, rows)=>{
+        // console.log(rows)
+        // if(rows){ console.log('worked') }
+    })
+
+
+    // db.all("SELECT * FROM semester_list", (err, rows)=>{
     //     console.log(rows)
     // })
+    // db.all('SELECT emp_tbl_name FROM semester_list', (err,rows)=>{
+    //     console.log(rows);
+    //     rows.forEach((e)=>{
+    //         console.log(e['emp_tbl_name'])
+    //     })
+    // })
 
+    
+    // testing()
+    function testing(){
+        //gets all the semesters and puts them into an array
+        let semesters = []
+        db.each('SELECT emp_tbl_name FROM semester_list', (err,row)=>{
+            semesters.push(row['emp_tbl_name'])
+        }, () =>{ //called once db.each() finishes
+            getInfo()
+        })
 
-    db.all("SELECT * FROM employees WHERE first_name LIKE '%Carl%' AND employed=1", (err, rows)=>{
-        console.log(rows)
-    })
+        let semesterInfo = []
+        function getInfo() {
+            let count=0
+            
+            semesters.forEach(semName => {
+                console.log(semName)
+                // let dbString = 'SELECT * FROM employees_spring_2019 WHERE sid="010517091"'
+                let dbString = 'SELECT * FROM '+semName+' WHERE sid="010517091"'
+                db.each(dbString, (err, row)=>{
+                    if(row){
+                        console.log('worked')
+                        let empInfo = []
+                        let obj = row //assigns object in array
+                        empInfo.push(semName)
+                        for (var key in obj){ // key = object attribute name & obj = the object itself
+                            var attrName = key // the arributes name is the key
+                            var attrValue = obj[key] // how to retireve the obj value
+                            empInfo.push(obj[key])
+                        }
+                        semesterInfo.push(empInfo)
+                    }
+
+                }, () => {
+                    //promise, calls once db query completes
+                    if(count === semesters.length-1){
+                        sendResult()
+                    } else { count++ }
+                })
+            })
+        }
+        
+        function sendResult() {
+            console.log('sent')
+            //event.sender.send('edit-reply', semesterInfo)
+        }
+    }
+
 })
 
-db.close();
+//db.close();
