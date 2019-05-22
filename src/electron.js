@@ -61,7 +61,7 @@ ipcMain.on('edit-get', (event, arg) => {
     db.serialize(function(){
         //gets all the semesters and puts them into an array
         let semesters = []
-        db.each('SELECT emp_tbl_name FROM semester_list', (err,row)=>{
+        db.each('SELECT emp_tbl_name FROM semester_list ORDER BY emp_tbl_name DESC', (err,row)=>{
             semesters.push(row['emp_tbl_name'])
         }, () =>{ //called once db.each() finishes
             getInfo()
@@ -72,24 +72,26 @@ ipcMain.on('edit-get', (event, arg) => {
             semesters.forEach(semName => {
                 let dbString = 'SELECT * FROM '+semName+' WHERE sid="'+arg+'"'
                 console.log(dbString)
-                db.each(dbString, (err, row)=>{ // should only give one row
-                    if(row){
-                        let empInfo = []
-                        let obj = row //assigns object in array
-                        empInfo.push(semName)
-                        for (var key in obj){ // key = object attribute name & obj = the object itself
-                            var attrName = key // the arributes name is the key
-                            var attrValue = obj[key] // how to retireve the obj value
-                            empInfo.push(obj[key])
+                db.serialize(function(){
+                    db.each(dbString, (err, row)=>{ // should only give one row
+                        if(row){
+                            let empInfo = []
+                            let obj = row //assigns object in array
+                            empInfo.push(semName)
+                            for (var key in obj){ // key = object attribute name & obj = the object itself
+                                var attrName = key // the arributes name is the key
+                                var attrValue = obj[key] // how to retireve the obj value
+                                empInfo.push(obj[key])
+                            }
+                            semesterInfo.push(empInfo)
                         }
-                        semesterInfo.push(empInfo)
-                    }
-                    
-                }, () => {
-                    //promise, calls once db query completes
-                    if(count === semesters.length-1){
-                        sendResult()
-                    } else { count++ }
+                        
+                    }, () => {
+                        //promise, calls once db query completes
+                        if(count === semesters.length-1){
+                            sendResult()
+                        } else { count++ }
+                    })
                 })
             })
         }
@@ -102,9 +104,54 @@ ipcMain.on('edit-get', (event, arg) => {
 
 ipcMain.on('edit-post', (event, arg) => {
     //take data and replace the coresponding rows data
-    db.serialize(function(){
 
+    // 1. Get input variables (semester being saved and all other variables)
+    // 2. Add query to DB
+    console.log(arg)
+    let semseter = arg[0]
+    let data = arg[1]
+
+    db.serialize(function(){
+        db.run('UPDATE '+ semseter +' SET last_name=$last_name, first_name=$first_name, preferred_name=$preferred_name, pronouns=$pronouns, email=$email, phone_number=$phone_number, shirt_size=$shirt_size, grad_date=$grad_date, major=$major, college=$college, undergrad=$undergrad, international=$international, role=$role, semester_start=$semester_start, hire_status=$hire_status, schedule_sent=$schedule_sent, evc_date=$evc_date, pay_rate=$pay_rate, leave_date=$leave_date, leave_reason=$leave_reason, training_levels=$training_levels, certifications=$certifications, avg_hours_wk=$avg_hours_wk, courses=$courses, languages=$languages, strengths=$strengths, special_interests=$special_interests WHERE sid=$sid', {
+            $last_name:         data['last_name'], 
+            $first_name:        data['first_name'], 
+            $preferred_name:    data['preferred_name'], 
+            $pronouns:          data['pronouns'], 
+            $email:             data['email'], 
+            $phone_number:      data['phone_number'],
+            $shirt_size:        data['shirt_size'], 
+            $grad_date:         data['grad_date'], 
+            $major:             data['major'], 
+            $college:           data['college'], 
+            $undergrad:         data['undergrad'], 
+            $international:     data['international'], 
+            $role:              data['role'], 
+            $semester_start:    data['semester_start'], 
+            $hire_status:       data['hire_status'], 
+            $schedule_sent:     data['schedule_sent'], 
+            $evc_date:          data['evc_date'], 
+            $pay_rate:          data['pay_rate'], 
+            $leave_date:        data['leave_date'], 
+            $leave_reason:      data['leave_reason'], 
+            $training_levels:   data['training_levels'], 
+            $certifications:    data['certifications'], 
+            $avg_hours_wk:      data['avg_hours_wk'], 
+            $courses:           data['courses'], 
+            $languages:         data['languages'], 
+            $strengths:         data['strengths'], 
+            $special_interests: data['special_interests'],
+            $sid:               data['sid']
+        }, (err)=>{ 
+            if(err){
+                confirmQuery(false)
+            } else {
+                confirmQuery(true)
+            }
+        })
     })
+    function confirmQuery(queryErr) {
+        event.sender.send('edit-confirm', queryErr) 
+    }
 })
 
 // for Search page

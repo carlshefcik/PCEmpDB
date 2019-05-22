@@ -12,15 +12,15 @@ export default class EmployeeForm extends Component {
   constructor(props) {
     super(props);
 
-    console.log(this.props);
+    // console.log(this.props);
     this.state = {
       first_name: '',
       last_name: '',
-      preffered_name: '',
+      preferred_name: '',
       pronouns: '',
       sid: '',
       email: '',
-      phone: '',
+      phone_number: '',
       shirt_size: '',
 
       grad_date: '',
@@ -39,14 +39,14 @@ export default class EmployeeForm extends Component {
       leave_reason: '',
       training_levels: '',
       certifications: '',
-      avg_hours: '',
+      avg_hours_wk: '',
     };
   }
 
   //this.props are passes in by parameter names
   componentDidMount() {
-    console.log(this.props);
-    console.log("Hello!!!!")
+    // console.log(this.props);
+    // console.log("Hello!!!!")
     //this.setState({name: this.props.data[3]+' '+this.props.data[2]})
   }
   
@@ -56,15 +56,14 @@ export default class EmployeeForm extends Component {
 
   //TODO make sure new data is the full data req
   fillForm = (newData) => {
-    console.log(newData)
     this.setState({
       first_name: newData[4],
       last_name: newData[3],
-      preffered_name: newData[5],
+      preferred_name: newData[5],
       pronouns: newData[6],
       sid: newData[2],
       email: newData[7],
-      phone: newData[8],
+      phone_number: newData[8],
       shirt_size: newData[9],
 
       grad_date: newData[10],
@@ -74,7 +73,7 @@ export default class EmployeeForm extends Component {
       international: newData[14],
 
       role: newData[15],
-      sem_start: newData[16],
+      semester_start: newData[16],
       hire_status: newData[17],
       schedule_sent: newData[18],
       evc_date: newData[19],
@@ -83,16 +82,15 @@ export default class EmployeeForm extends Component {
       leave_reason: newData[22],
       training_levels: newData[23],
       certifications: newData[24],
-      avg_hours: newData[25],
+      avg_hours_wk: newData[25],
 
       courses: newData[26],
       languages: newData[27],
       strengths: newData[28],
       special_interests: newData[29],
       
-    })
+    }, ()=>{ console.log(this.state) })
 
-    console.log(this.state)
   }
 
   tester = () => {
@@ -121,8 +119,8 @@ export default class EmployeeForm extends Component {
                 </Col>
                 <Col md={3} sm={6}>
                   <FormGroup>
-                    <Label for="preffered_name">Preffered Name</Label>
-                    <Input id="preffered_name" value={this.state.preffered_name} onChange={e => this.setState({preffered_name: e.target.value})} />
+                    <Label for="preffered_name">Preferred Name</Label>
+                    <Input id="preffered_name" value={this.state.preferred_name} onChange={e => this.setState({preferred_name: e.target.value})} />
                   </FormGroup>
                 </Col>
                 <Col md={3} sm={6}>
@@ -149,7 +147,7 @@ export default class EmployeeForm extends Component {
                 <Col md={3} sm={6}>
                   <FormGroup>
                     <Label for="phone">Phone</Label>
-                    <Input id="preffered_name" value={this.state.phone} onChange={e => this.setState({phone: e.target.value})} />
+                    <Input id="preffered_name" value={this.state.phone_number} onChange={e => this.setState({phone_number: e.target.value})} />
                   </FormGroup>
                 </Col>
                 <Col md={3} sm={6}>
@@ -236,7 +234,7 @@ export default class EmployeeForm extends Component {
                 <Col md={3} sm={6}>
                   <FormGroup>
                     <Label for="sem_start">Semester Start</Label>
-                    <Input id="sem_start" value={this.state.sem_start} onChange={e => this.setState({sem_start: e.target.value})} />
+                    <Input id="sem_start" value={this.state.semester_start} onChange={e => this.setState({semester_start: e.target.value})} />
                   </FormGroup>
                 </Col>
                 <Col md={3} sm={6}>
@@ -296,7 +294,7 @@ export default class EmployeeForm extends Component {
                 <Col md={3} sm={6}>
                   <FormGroup>
                     <Label for="avg_hours">Avg Hours/Wk</Label>
-                    <Input id="avg_hours" value={this.state.avg_hours} onChange={e => this.setState({avg_hours: e.target.value})} />
+                    <Input id="avg_hours" value={this.state.avg_hours_wk} onChange={e => this.setState({avg_hours_wk: e.target.value})} />
                   </FormGroup>
                 </Col>
               </Row>
@@ -342,9 +340,8 @@ export default class EmployeeForm extends Component {
           <hr/>
         </Form>
 
-        <Button onClick={e => this.submitForm()}>Submit Form</Button>
+        <Button color="primary" onClick={e => this.submitForm()}>Submit Form</Button>
         <br/>
-        <Button onClick={e => console.log(this.state)}>log state</Button>
       </div>  
     )
   }

@@ -15,6 +15,8 @@ import {
 import { Link } from 'react-router-dom';
 import './CustomNavbar.css';
 
+import logo from './brand.png'
+
 export default class CustomNavbar extends Component {
   constructor(props) {
     super(props);
@@ -33,7 +35,7 @@ export default class CustomNavbar extends Component {
     return (
       <div>
         <Navbar color="light" light expand="md">
-          <NavbarBrand><Link to="/">DeannaBase</Link></NavbarBrand>
+          <NavbarBrand><Link to="/"><img src={logo} width="200" height="50" alt="" /></Link></NavbarBrand>
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="ml-auto" navbar>

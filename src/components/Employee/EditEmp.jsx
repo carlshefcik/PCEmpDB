@@ -42,6 +42,7 @@ export default class EditEmp extends Component {
 
       //this should be a function that sets the data in the employee form
       this.setState({data: arg})
+      console.log(arg)
       
       if(arg.length !== 0){
         for(let i=0; i<arg.length; i++){
@@ -56,8 +57,19 @@ export default class EditEmp extends Component {
   }
 
   formSubmission = (dataFromChild) => {
-    console.log(dataFromChild);
+    // console.log(dataFromChild);
     // 1. take the data from the child and send if to the electron main
+    let data = [this.state.semSel, dataFromChild]
+    ipcRenderer.send('edit-post', data)
+    ipcRenderer.once('edit-confirm', (event, arg) => {
+      //trigger an alert on the screen
+      if(arg){
+        alert("Data successfully saved!")
+      } else {
+        alert("Something went wrong, your data might not have been saved!")
+      }
+      
+    })
   }
 
   changeSem = (event) => {
@@ -104,8 +116,7 @@ export default class EditEmp extends Component {
           <br/><br/>
           <h3>To do list: </h3>
           <p>
-            1. Create this.state values to use this.props values when given that pass into it to load the form<br/>
-            2. Figure out how to access the form data from the AddEmp and EditEmp pages
+            1. Create and load more verbose datatypes into the parameters
           </p>
 
         </Jumbotron>
