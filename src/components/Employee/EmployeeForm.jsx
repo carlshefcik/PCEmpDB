@@ -40,10 +40,6 @@ export default class EmployeeForm extends Component {
       training_levels: '',
       certifications: '',
       avg_hours: '',
-
-
-
-      data: []
     };
   }
 
@@ -55,46 +51,44 @@ export default class EmployeeForm extends Component {
   }
   
   submitForm = () =>{
-    let employeeInfo = "From the EmployeeForm.jsx!!!!";
-    this.props.formSubmit(employeeInfo);
+    this.props.formSubmit(this.state);
   }
 
   //TODO make sure new data is the full data req
   fillForm = (newData) => {
     console.log(newData)
     this.setState({
-      data: newData,
-      first_name: newData[0][4],
-      last_name: newData[0][3],
-      preffered_name: newData[0][5],
-      pronouns: newData[0][6],
-      sid: newData[0][2],
-      email: newData[0][7],
-      phone: newData[0][8],
-      shirt_size: newData[0][9],
+      first_name: newData[4],
+      last_name: newData[3],
+      preffered_name: newData[5],
+      pronouns: newData[6],
+      sid: newData[2],
+      email: newData[7],
+      phone: newData[8],
+      shirt_size: newData[9],
 
-      grad_date: newData[0][10],
-      major: newData[0][11],
-      college: newData[0][12],
-      undergrad: newData[0][13],
-      international: newData[0][14],
+      grad_date: newData[10],
+      major: newData[11],
+      college: newData[12],
+      undergrad: newData[13],
+      international: newData[14],
 
-      role: newData[0][15],
-      sem_start: newData[0][16],
-      hire_status: newData[0][17],
-      schedule_sent: newData[0][18],
-      evc_date: newData[0][19],
-      pay_rate: newData[0][20],
-      leave_date: newData[0][21],
-      leave_reason: newData[0][22],
-      training_levels: newData[0][23],
-      certifications: newData[0][24],
-      avg_hours: newData[0][25],
+      role: newData[15],
+      sem_start: newData[16],
+      hire_status: newData[17],
+      schedule_sent: newData[18],
+      evc_date: newData[19],
+      pay_rate: newData[20],
+      leave_date: newData[21],
+      leave_reason: newData[22],
+      training_levels: newData[23],
+      certifications: newData[24],
+      avg_hours: newData[25],
 
-      courses: newData[0][26],
-      languages: newData[0][27],
-      strengths: newData[0][28],
-      special_interests: newData[0][29],
+      courses: newData[26],
+      languages: newData[27],
+      strengths: newData[28],
+      special_interests: newData[29],
       
     })
 
@@ -143,7 +137,7 @@ export default class EmployeeForm extends Component {
                 <Col md={3} sm={6}>
                   <FormGroup>
                     <Label for="sid">SID</Label>
-                    <Input id="sid" value={this.state.sid} onChange={e => this.setState({sid: e.target.value})} />
+                    <Input id="sid" disabled value={this.state.sid} onChange={e => this.setState({sid: e.target.value})} />
                   </FormGroup>
                 </Col>
                 <Col md={3} sm={6}>
@@ -235,7 +229,7 @@ export default class EmployeeForm extends Component {
                       <option value={0}>Tutor</option>
                       <option value={1}>Mentor</option>
                       <option value={2}>SI Leader</option>
-                      <option value={3}>WDSK</option>
+                      <option value={3}>WDS</option>
                     </Input>
                   </FormGroup>
                 </Col>
@@ -347,6 +341,9 @@ export default class EmployeeForm extends Component {
           </Row>
           <hr/>
         </Form>
+
+        <Button onClick={e => this.submitForm()}>Submit Form</Button>
+        <br/>
         <Button onClick={e => console.log(this.state)}>log state</Button>
       </div>  
     )

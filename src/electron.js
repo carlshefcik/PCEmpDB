@@ -100,6 +100,13 @@ ipcMain.on('edit-get', (event, arg) => {
     })
 })
 
+ipcMain.on('edit-post', (event, arg) => {
+    //take data and replace the coresponding rows data
+    db.serialize(function(){
+
+    })
+})
+
 // for Search page
 ipcMain.on('search-get', (event, arg) => {
     console.log(arg);
@@ -163,13 +170,13 @@ function createWindow() {
     mainWindow = new BrowserWindow({width: 1280, height: 720});
 
     // and load the index.html of the app.
-    const startUrl = process.env.ELECTRON_START_URL || url.format({
-        pathname: path.join(__dirname, '/../build/index.html'),
-        protocol: 'file:',
-        slashes: true
-    });
-    mainWindow.loadURL(startUrl);
-    //mainWindow.loadURL('http://localhost:3000');
+    // const startUrl = process.env.ELECTRON_START_URL || url.format({
+    //     pathname: path.join(__dirname, '/../build/index.html'),
+    //     protocol: 'file:',
+    //     slashes: true
+    // });
+    // mainWindow.loadURL(startUrl);
+    mainWindow.loadURL('http://localhost:3000');
 
     // Open the DevTools.
     mainWindow.webContents.openDevTools();

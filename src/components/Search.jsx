@@ -122,7 +122,7 @@ class DataTable extends Component {
     //this creates the info inside the datatable
     let items = this.state.data.map(rowData => {
       let role = ''
-      if(rowData[5] === 0) {role = 'Tutor'} else if (rowData[5] === 1) { role = 'Mentor'} else if (rowData[5] === 2) { role = 'SI'} else if (rowData[5] === 3) { role = 'WDSK'}
+      if(rowData[5] === 0) {role = 'Tutor'} else if (rowData[5] === 1) { role = 'Mentor'} else if (rowData[5] === 2) { role = 'SI'} else if (rowData[5] === 3) { role = 'WDS'}
       return (
         <tr>
           <td>{rowData[3]}</td>

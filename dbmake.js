@@ -8,7 +8,7 @@ const db = new sqlite3.Database("Employee.db")
 
 db.serialize(function(){
     //semester_list
-    db.run('CREATE TABLE IF NOT EXISTS semester_list (semester_id INTEGER PRIMARY KEY AUTOINCREMENT, semester varchar(5), year NUMBER(4), emp_tbl_name TEXT, tutor_tbl_name TEXT, mentor_tbl_name TEXT, si_tbl_name TEXT)')
+    db.run('CREATE TABLE IF NOT EXISTS semester_list (semester_id INTEGER PRIMARY KEY AUTOINCREMENT, current INTEGER, semester varchar(5), year NUMBER(4), emp_tbl_name TEXT, tutor_tbl_name TEXT, mentor_tbl_name TEXT, si_tbl_name TEXT)')
     //semester_summary has a summary of info on that specific semester
     db.run('CREATE TABLE IF NOT EXISTS semester_summary (semester_id INTEGER PRIMARY KEY AUTOINCREMENT, semester varchar(5), year NUMBER(4), emp_tbl_name TEXT, tutor_tbl_name TEXT, mentor_tbl_name TEXT, si_tbl_name TEXT)')
     
@@ -48,7 +48,12 @@ db.serialize(function(){
     db.run('INSERT INTO employees (sid, last_name, first_name, employed, current_role) VALUES ("010517091", "Shefcik", "Carl", 1, 3)')
     db.run('INSERT INTO employees (sid, last_name, first_name, employed, current_role) VALUES ("123456789", "Naeem", "Sonnan", 0, 0)')
     db.run('INSERT INTO employees_spring_2019 (sid, last_name, first_name, preferred_name, pronouns, email, phone_number, shirt_size, grad_date, major, college, undergrad, international, role, semester_start, hire_status, schedule_sent, evc_date, pay_rate, leave_date, leave_reason, training_levels, certifications, avg_hours_wk, courses, languages, strengths, special_interests) VALUES ("010517091", "Shefcik", "Carl", "Carl", 1, "carl.shefcik@sjsu.edu", "619-846-3775", 2, "Spring 2020", "Software Engineering", "Engineering", 1, 0, 3, "Fall 2017", "Good?", "1", "date format", "14", "", "", "SI level 2", "", "15.75", "array pointing to class ids", "English", "strengths", "memes")')
-    db.run('INSERT INTO semester_list (semester, year, emp_tbl_name) VALUES ("Spring", 2019, "employees_spring_2019")')
+    db.run('INSERT INTO semester_list (current, semester, year, emp_tbl_name) VALUES (1, "Spring", 2019, "employees_spring_2019")')
+    
+    db.run('CREATE TABLE IF NOT EXISTS employees_fall_2018 (person_id INTEGER PRIMARY KEY AUTOINCREMENT, sid TEXT, last_name TEXT, first_name TEXT, preferred_name TEXT, pronouns INTEGER, email TEXT, phone_number TEXT, shirt_size INTEGER, grad_date TEXT, major TEXT, college TEXT, undergrad INTEGER, international INTEGER, role INTEGER, semester_start TEXT, hire_status TEXT, schedule_sent INTEGER, evc_date TEXT, pay_rate TEXT, leave_date TEXT, leave_reason TEXT, training_levels TEXT, certifications TEXT, avg_hours_wk TEXT, courses TEXT, languages TEXT, strengths TEXT, special_interests TEXT)')
+
+    db.run('INSERT INTO employees_fall_2018 (sid, last_name, first_name, preferred_name, pronouns, email, phone_number, shirt_size, grad_date, major, college, undergrad, international, role, semester_start, hire_status, schedule_sent, evc_date, pay_rate, leave_date, leave_reason, training_levels, certifications, avg_hours_wk, courses, languages, strengths, special_interests) VALUES ("010517091", "Shefcik", "Carl", "Carl", 1, "carl.shefcik@sjsu.edu", "619-846-3775", 2, "Spring 2020", "Software Engineering", "Engineering", 1, 0, 2, "Fall 2017", "Good?", "1", "date format", "14", "", "", "SI level 2", "", "15.75", "array pointing to class ids", "English", "strengths", "memes")')
+    db.run('INSERT INTO semester_list (current, semester, year, emp_tbl_name) VALUES (0, "fall", 2018, "employees_fall_2018")')
 
 
     // delete command

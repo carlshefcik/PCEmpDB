@@ -17,7 +17,9 @@ export default class EditEmp extends Component {
   constructor(props){
     super(props);
     this.state = {
-      data: []
+      data: [],
+      semesters: [],
+      semSel: ''
     };
   }
   
@@ -40,34 +42,56 @@ export default class EditEmp extends Component {
 
       //this should be a function that sets the data in the employee form
       this.setState({data: arg})
+      
       if(arg.length !== 0){
-        this.refs.emp_form.fillForm(arg);
+        for(let i=0; i<arg.length; i++){
+          this.state.semesters.push(arg[i][0])
+        }
+        this.setState({semSel: arg[0][0]})
+        this.fillEmployeeForm(arg[0][0])
       } else { 
         console.log('no data for employee')
       }
-      
     })
-
-    
   }
 
   formSubmission = (dataFromChild) => {
     console.log(dataFromChild);
+    // 1. take the data from the child and send if to the electron main
+  }
+
+  changeSem = (event) => {
+    this.setState({semSel: event.target.value})
+    this.fillEmployeeForm(event.target.value)
+  }
+
+  fillEmployeeForm = (semester) => {
+    for(let i=0; i<this.state.data.length; i++){
+      if(this.state.data[i][0] === semester){
+        this.refs.emp_form.fillForm(this.state.data[i])
+      }
+    }
   }
 
   render() {
+    let semSelOptions = this.state.semesters.map(semester => {
+      let values = semester.split('_')
+      let option = values[1]+" "+values[2]
+      return (
+        <option value={semester}>{option}</option>
+      )
+    })
     return (
       <Container>
         <Jumbotron>
-
           <Row>
             <Col>
               <h1>Edit Employee:</h1>
             </Col>
             <Col md={4} sm={6}>
               <h4>Semester: </h4>
-              <Input type="select" bsSize="sm">
-                <option>Semester</option>
+              <Input type="select" bsSize="sm" value={this.state.semSel} onChange={e => this.changeSem(e) }>
+                {semSelOptions}
               </Input>
             </Col>
           </Row>
@@ -80,9 +104,8 @@ export default class EditEmp extends Component {
           <br/><br/>
           <h3>To do list: </h3>
           <p>
-            1. Create form <br/>
-            2. Create this.state values to use this.props values when given that pass into it to load the form<br/>
-            3. Figure out how to access the form data from the AddEmp and EditEmp pages
+            1. Create this.state values to use this.props values when given that pass into it to load the form<br/>
+            2. Figure out how to access the form data from the AddEmp and EditEmp pages
           </p>
 
         </Jumbotron>
