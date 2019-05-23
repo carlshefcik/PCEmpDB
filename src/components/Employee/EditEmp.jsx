@@ -19,7 +19,8 @@ export default class EditEmp extends Component {
     this.state = {
       data: [],
       semesters: [],
-      semSel: ''
+      semSel: '',
+      sid:''
     };
   }
   
@@ -27,6 +28,7 @@ export default class EditEmp extends Component {
   componentDidMount() {
     let {search} = this.props.location
     let sid = search.substring(5)
+    this.setState({sid: sid})
     console.log(sid)
 
 
@@ -35,6 +37,7 @@ export default class EditEmp extends Component {
     function loadPage(){
       ipcRenderer.send('edit-get', sid)
     }
+
     ipcRenderer.once('edit-reply', (event, arg) => {
       // This will receive all the info from the employ across all semesters they have been here
       // We need to load the recent semester to the this.state to fill the form and have a selector at the top that lets you select which semester (or it could be individual tabs)
@@ -53,6 +56,8 @@ export default class EditEmp extends Component {
       } else { 
         console.log('no data for employee')
       }
+
+
     })
   }
 
@@ -65,6 +70,11 @@ export default class EditEmp extends Component {
       //trigger an alert on the screen
       if(arg){
         alert("Data successfully saved!")
+        //reload data object
+        ipcRenderer.send('edit-get', this.state.sid)
+        ipcRenderer.once('edit-reply', (event, arg) => {
+          this.setState({data: arg})
+        })
       } else {
         alert("Something went wrong, your data might not have been saved!")
       }

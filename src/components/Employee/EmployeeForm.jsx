@@ -197,17 +197,21 @@ export default class EmployeeForm extends Component {
                   <FormGroup>
                     <Label for="undergrad">Undergrad</Label>
                     {/* <Input id="grad_date" value={this.state.grad_date} onChange={e => this.setState({grad_date: e.target.value})} /> */}
-                    <CustomInput  type="radio" id="undergrad" label="Yes" value={1} checked={this.state.undergrad === 1} onChange={e => this.setState({undergrad: 1})} />
-                    <CustomInput  type="radio" id="undergrad" label="No" value={0} checked={this.state.undergrad === 0} onChange={e => this.setState({undergrad: 0})} />
-                  
+                    <div>
+                      <CustomInput  type="radio" id="undergrad1" label="Yes" value={1} checked={this.state.undergrad === 1} onChange={e => this.setState({undergrad: 1})} />
+                      <CustomInput  type="radio" id="undergrad2" label="No" value={0} checked={this.state.undergrad === 0} onChange={e => this.setState({undergrad: 0})} />
+                    </div>
+                    
                   </FormGroup>
                 </Col>
                 <Col md={3} sm={6}>
                   <FormGroup>
                     <Label for="international">International</Label>
                     {/* <Input id="college" value={this.state.college} onChange={e => this.setState({college: e.target.value})} /> */}
-                    <CustomInput type="radio" id="international" label="Yes" value={1} checked={this.state.international === 2} onChange={e => this.setState({international: 1})} />
-                    <CustomInput type="radio" id="international" label="No" value={0} checked={this.state.international === 0} onChange={e => this.setState({international: 0})} />
+                    <div>
+                      <CustomInput type="radio" id="international1" label="Yes" value={1} checked={this.state.international === 1} onClick={e => this.setState({international: 1})}/>
+                      <CustomInput type="radio" id="international2" label="No" value={0} checked={this.state.international === 0} onClick={e => this.setState({international: 0})}/>
+                    </div>
                   </FormGroup>
                 </Col>
               </Row>
