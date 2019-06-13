@@ -154,6 +154,88 @@ ipcMain.on('edit-post', (event, arg) => {
     }
 })
 
+// for AddEmp page
+ipcMain.on('add-get', (event, arg) => {
+    //TODO I think it should get the employee and search their id in every semester table and return all the tables they are in and the front will load the most recent semester and say what semester with a large selector at the top
+    
+    // 1. Returns all of the semesters
+
+    db.serialize(function(){
+        //gets all the semesters and puts them into an array
+        let semesters = []
+        db.each('SELECT emp_tbl_name FROM semester_list ORDER BY emp_tbl_name DESC', (err,row)=>{
+            semesters.push(row['emp_tbl_name'])
+        }, () =>{ //called once db.each() finishes
+            sendResult()
+        })
+        
+        function sendResult() {
+            event.sender.send('add-reply', semesters)
+        }
+    })
+})
+
+ipcMain.on('add-post', (event, arg) => {
+    //take data and replace the coresponding rows data
+
+    // 1. Get input variables (semester being saved and all other variables)
+    // 2. Add query to DB
+    console.log(arg)
+    let semseter = arg[0]
+    let data = arg[1]
+
+    // 3. Add to employees table 
+    // 4. Add to the specific semester
+    db.serialize(function(){
+        db.run('INSERT INTO employees (sid, last_name, first_name, employed, current_role) VALUES ($sid, $last_name, $first_name, $employed, $current_role)', {
+            $sid:               data['sid'],
+            $last_name:         data['last_name'],
+            $first_name:        data['first_name'],
+            $employed:          1, //default is one, maybe add an option too the page?
+            $current_role:      data['role']
+        })
+        db.run('INSERT INTO '+ semseter +' (sid, last_name, first_name, preferred_name, pronouns, email, phone_number, shirt_size, grad_date, major, college, undergrad, international, role, semester_start, hire_status, schedule_sent, evc_date, pay_rate, leave_date, leave_reason, training_levels, certifications, avg_hours_wk, courses, languages, strengths, special_interests) VALUES ($sid, $last_name, $first_name, $preferred_name, $pronouns, $email, $phone_number, $shirt_size, $grad_date, $major, $college, $undergrad, $international, $role, $semester_start, $hire_status, $schedule_sent, $evc_date, $pay_rate, $leave_date, $leave_reason, $training_levels, $certifications, $avg_hours_wk, $courses, $languages, $strengths, $special_interests)', {
+            $last_name:         data['last_name'], 
+            $first_name:        data['first_name'], 
+            $preferred_name:    data['preferred_name'], 
+            $pronouns:          data['pronouns'], 
+            $email:             data['email'], 
+            $phone_number:      data['phone_number'],
+            $shirt_size:        data['shirt_size'], 
+            $grad_date:         data['grad_date'], 
+            $major:             data['major'], 
+            $college:           data['college'], 
+            $undergrad:         data['undergrad'], 
+            $international:     data['international'], 
+            $role:              data['role'], 
+            $semester_start:    data['semester_start'], 
+            $hire_status:       data['hire_status'], 
+            $schedule_sent:     data['schedule_sent'], 
+            $evc_date:          data['evc_date'], 
+            $pay_rate:          data['pay_rate'], 
+            $leave_date:        data['leave_date'], 
+            $leave_reason:      data['leave_reason'], 
+            $training_levels:   data['training_levels'], 
+            $certifications:    data['certifications'], 
+            $avg_hours_wk:      data['avg_hours_wk'], 
+            $courses:           data['courses'], 
+            $languages:         data['languages'], 
+            $strengths:         data['strengths'], 
+            $special_interests: data['special_interests'],
+            $sid:               data['sid']
+        }, (err)=>{ 
+            if(err){
+                confirmQuery(false)
+            } else {
+                confirmQuery(true)
+            }
+        })
+    })
+    function confirmQuery(queryErr) {
+        event.sender.send('add-confirm', queryErr) 
+    }
+})
+
 // for Search page
 ipcMain.on('search-get', (event, arg) => {
     console.log(arg);

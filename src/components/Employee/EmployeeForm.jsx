@@ -21,7 +21,7 @@ export default class EmployeeForm extends Component {
       sid: '',
       email: '',
       phone_number: '',
-      shirt_size: '',
+      shirt_size: 0,
 
       grad_date: '',
       major: '',
@@ -29,7 +29,7 @@ export default class EmployeeForm extends Component {
       undergrad: '',
       international: '',
       
-      role: '',
+      role: 0,
       semester_start: '',
       hire_status: '',
       schedule_sent: '',
@@ -40,6 +40,8 @@ export default class EmployeeForm extends Component {
       training_levels: '',
       certifications: '',
       avg_hours_wk: '',
+
+      employed: 1,
     };
   }
 
@@ -48,6 +50,7 @@ export default class EmployeeForm extends Component {
     // console.log(this.props);
     // console.log("Hello!!!!")
     //this.setState({name: this.props.data[3]+' '+this.props.data[2]})
+    this.setState({disabled: this.props.disabled})
   }
   
   submitForm = () =>{
@@ -135,7 +138,7 @@ export default class EmployeeForm extends Component {
                 <Col md={3} sm={6}>
                   <FormGroup>
                     <Label for="sid">SID</Label>
-                    <Input id="sid" disabled value={this.state.sid} onChange={e => this.setState({sid: e.target.value})} />
+                    <Input id="sid" disabled={this.state.disabled} value={this.state.sid} onChange={e => this.setState({sid: e.target.value})} />
                   </FormGroup>
                 </Col>
                 <Col md={3} sm={6}>
@@ -344,6 +347,14 @@ export default class EmployeeForm extends Component {
           <hr/>
         </Form>
 
+        <FormGroup>
+          <Label for="currentlyEmployed">Currently Employed</Label>
+          {/* <Input id="college" value={this.state.college} onChange={e => this.setState({college: e.target.value})} /> */}
+          <div>
+            <CustomInput type="radio" id="currentlyEmployed1" label="Yes" value={1} checked={this.state.employed === 1} onClick={e => this.setState({employed: 1})}/>
+            <CustomInput type="radio" id="currentlyEmployed2" label="No" value={0} checked={this.state.employed === 0} onClick={e => this.setState({employed: 0})}/>
+          </div>
+        </FormGroup>
         <Button color="primary" onClick={e => this.submitForm()}>Submit Form</Button>
         <br/>
       </div>  

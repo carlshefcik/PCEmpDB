@@ -59,35 +59,34 @@ class DataTable extends Component {
       // employed: [],
       // oldStaff: [],
       dataTable: null,
-      data: [[1,2,3],[1,2,3]] // needs temp for some reason
+      data: [0] // needs temp for some reason
     }
   }
 
   componentDidMount() {
-    //this.props.onRef(this)
-
-    //initialize datatable
-    // let table = 
-    $(this.refs.table_id).DataTable({
-      paging: false,
-      info: false,
-      searching: false
-    })
-
-    //this didnt work, need to wait for promise for immediate use on load
-    // this.setState({dataTable: table})
-    //console.log(this.state.dataTable)
-
     //TODO Load all the current employees to the list on page open
     this.searchDB()
 
-    //can i set these up to get replies indefinitely here, I think so right?
+    // takes reply and adds it to the data
     ipcRenderer.on('search-reply', (event, arg) => {
-      //this.setState({employed: arg})
-      this.setState({data: arg})
-      // console.log('Search Success! Loading Results...')
-    })
+      //removes old reference of datatable
+      $(this.refs.table_id).DataTable().destroy()
 
+      //sets the data inside the table
+      this.setState({data: arg})
+
+      //initializes the datatable
+      $(this.refs.table_id).DataTable({
+        paging: false,
+        info: false,
+        searching: false,
+        columnDefs: [{
+          targets: 4,
+          searchable: false,
+          orderable: false,
+        }],
+      })
+    })
   }
 
   componentWillUnmount() {
@@ -122,7 +121,7 @@ class DataTable extends Component {
     //this creates the info inside the datatable
     let items = this.state.data.map(rowData => {
       let role = ''
-      if(rowData[5] === 0) {role = 'Tutor'} else if (rowData[5] === 1) { role = 'Mentor'} else if (rowData[5] === 2) { role = 'SI'} else if (rowData[5] === 3) { role = 'WDS'}
+      if(rowData[5] === -1) {role = 'N/A'} else if(rowData[5] === 0) {role = 'Tutor'} else if (rowData[5] === 1) { role = 'Mentor'} else if (rowData[5] === 2) { role = 'SI'} else if (rowData[5] === 3) { role = 'WDS'}
       return (
         <tr>
           <td>{rowData[3]}</td>
@@ -186,9 +185,7 @@ class DataTable extends Component {
           </thead>
           <tbody>
             {items}
-            {/* I think I will have to have it map a state object here from the results 
-            and that is changed with the state and 
-            I will delete the table and re initialize it and it will put what was here there allowing react elements */}
+            {/* I think I will have to have it map a state object here from the results and that is changed with the state and I will delete the table and re initialize it and it will put what was here there allowing react elements */}
           </tbody>
         </table>
         <hr/>

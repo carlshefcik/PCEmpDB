@@ -70,7 +70,7 @@ export default class EditEmp extends Component {
       //trigger an alert on the screen
       if(arg){
         alert("Data successfully saved!")
-        //reload data object
+        //reload data object to match data passed to database
         ipcRenderer.send('edit-get', this.state.sid)
         ipcRenderer.once('edit-reply', (event, arg) => {
           this.setState({data: arg})
@@ -118,7 +118,7 @@ export default class EditEmp extends Component {
             </Col>
           </Row>
           <hr/>
-          <EmployeeForm ref="emp_form" onRef={ref => (this.emp_form = ref)} test={"tesing"} formSubmit={this.formSubmission.bind(this)}/>
+          <EmployeeForm ref="emp_form" disabled={true} onRef={ref => (this.emp_form = ref)} formSubmit={this.formSubmission.bind(this)}/>
           <br/>
           <Link to="/">
             <Button color="primary"> Go to Home </Button>

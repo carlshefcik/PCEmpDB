@@ -22,6 +22,7 @@ export default class Home extends Component {
               4. Implement functionality on data entry and retrieval<br/>
               5. Implemet search<br/>
               6. Implement queries page<br/>
+              7. Add currently employed checkbox next to submit button in employee forms
             </p>
 
             <h3>Optional: </h3>
