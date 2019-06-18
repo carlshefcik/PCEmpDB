@@ -45,7 +45,7 @@ export default class CustomNavbar extends Component {
               <NavItem>
                 <NavLink><Link to="/About">About</Link></NavLink>
               </NavItem>
-              <UncontrolledDropdown nav inNavbar>
+              {/* <UncontrolledDropdown nav inNavbar>
                 <DropdownToggle nav caret>
                   Options
                 </DropdownToggle>
@@ -61,7 +61,7 @@ export default class CustomNavbar extends Component {
                     v 0.1
                   </DropdownItem>
                 </DropdownMenu>
-              </UncontrolledDropdown>
+              </UncontrolledDropdown> */}
             </Nav>
           </Collapse>
         </Navbar>

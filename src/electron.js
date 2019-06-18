@@ -112,6 +112,15 @@ ipcMain.on('edit-post', (event, arg) => {
     let data = arg[1]
 
     db.serialize(function(){
+        db.run('UPDATE employees SET employed=$employed WHERE sid=$sid', {
+            $employed:          data['employed'], 
+            $sid:               data['sid']
+        }, (err)=>{ 
+            //do nothing
+        })
+    })
+
+    db.serialize(function(){
         db.run('UPDATE '+ semseter +' SET last_name=$last_name, first_name=$first_name, preferred_name=$preferred_name, pronouns=$pronouns, email=$email, phone_number=$phone_number, shirt_size=$shirt_size, grad_date=$grad_date, major=$major, college=$college, undergrad=$undergrad, international=$international, role=$role, semester_start=$semester_start, hire_status=$hire_status, schedule_sent=$schedule_sent, evc_date=$evc_date, pay_rate=$pay_rate, leave_date=$leave_date, leave_reason=$leave_reason, training_levels=$training_levels, certifications=$certifications, avg_hours_wk=$avg_hours_wk, courses=$courses, languages=$languages, strengths=$strengths, special_interests=$special_interests WHERE sid=$sid', {
             $last_name:         data['last_name'], 
             $first_name:        data['first_name'], 
@@ -191,7 +200,7 @@ ipcMain.on('add-post', (event, arg) => {
             $sid:               data['sid'],
             $last_name:         data['last_name'],
             $first_name:        data['first_name'],
-            $employed:          1, //default is one, maybe add an option too the page?
+            $employed:          data['employed'], //default is one, maybe add an option too the page?
             $current_role:      data['role']
         })
         db.run('INSERT INTO '+ semseter +' (sid, last_name, first_name, preferred_name, pronouns, email, phone_number, shirt_size, grad_date, major, college, undergrad, international, role, semester_start, hire_status, schedule_sent, evc_date, pay_rate, leave_date, leave_reason, training_levels, certifications, avg_hours_wk, courses, languages, strengths, special_interests) VALUES ($sid, $last_name, $first_name, $preferred_name, $pronouns, $email, $phone_number, $shirt_size, $grad_date, $major, $college, $undergrad, $international, $role, $semester_start, $hire_status, $schedule_sent, $evc_date, $pay_rate, $leave_date, $leave_reason, $training_levels, $certifications, $avg_hours_wk, $courses, $languages, $strengths, $special_interests)', {

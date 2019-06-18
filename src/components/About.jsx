@@ -43,6 +43,13 @@ export default class About extends Component {
 
             <h4>Version</h4>
             <p>
+              <strong>0.9:</strong> TODO clean up styling for production<br/>
+              <strong>0.8:</strong> TODO created data visualizations<br/>
+              <strong>0.7:</strong> TODO create/import data from xlsx sheets<br/>
+              <strong>0.6:</strong> TODO create class/professor management system, including class search system<br/>
+              <strong>0.5:</strong> TODO create new semester functionality<br/>
+
+              <strong>0.4:</strong> Edit Employee Page works, Add Employee Page functionality mostly complete (need to fix current employee radio) (DONE i thnk)<br/>
               <strong>0.3:</strong> Using sid on search results to get to the edit page that queries the DB for the info<br/>
               <strong>0.2:</strong> Completed initial DB ERD and created search page functionality <br/>
               <strong>0.1:</strong> Initialized pages and created navigation components
