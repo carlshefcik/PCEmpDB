@@ -3,7 +3,8 @@ Backend will be using sqlite3 and electron
 
 Develop like you would any react app, only when using electron ipcmain and render do we need to worry about that, which only one person will work on to avoid code collisions.
 
-
+build instructions:
+run `npm run package-win` and then create an sqlite db using the createdb.js. Then copy the created db into the main folder.
 
 Rest it generated from create-react-app:
 

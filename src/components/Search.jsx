@@ -189,7 +189,7 @@ class DataTable extends Component {
           </tbody>
         </table>
         <hr/>
-        <Button onClick={e => console.log(this.state)}>log state</Button>
+        {/* <Button onClick={e => console.log(this.state)}>log state</Button> */}
       </div>
       
     )

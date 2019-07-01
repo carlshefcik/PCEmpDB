@@ -8,10 +8,11 @@ import {
   Nav,
   NavLink,
   NavItem,
-  UncontrolledDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem, } from 'reactstrap';
+  // UncontrolledDropdown,
+  // DropdownToggle,
+  // DropdownMenu,
+  // DropdownItem, 
+} from 'reactstrap';
 import { Link } from 'react-router-dom';
 import './CustomNavbar.css';
 
