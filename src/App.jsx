@@ -11,6 +11,7 @@ import Analytics from './components/Analytics/Analytics'
 import ImportData from './components/ImportData'
 import NewSemester from './components/NewSemester'
 import About from './components/About'
+import Classes from './components/Classes'
 
 class App extends Component {
   render() {
@@ -27,6 +28,7 @@ class App extends Component {
             <Route exact path="/Analytics" component={Analytics} />
             <Route exact path="/Import" component={ImportData} />
             <Route exact path="/NewSemester" component={NewSemester} />
+            <Route exact path="/Classes" component={Classes} />
             <Route exact path="/About" component={About} />
             <Route component={PageNotFound}/>
           </Switch>

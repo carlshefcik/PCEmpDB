@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 // eslint-disable-next-line
 import { Link } from 'react-router-dom';
 // eslint-disable-next-line
-import { Jumbotron, Container, Button, Row, Col, Input } from 'reactstrap';
+import { Jumbotron, Container, Button, Row, Col, Input, Modal, ModalBody, ModalFooter } from 'reactstrap';
 // import './Home.css';
 
 import EmployeeForm from "./EmployeeForm"
@@ -20,7 +20,9 @@ export default class EditEmp extends Component {
       data: [],
       semesters: [],
       semSel: '',
-      sid:''
+      sid:'',
+      dbResultInfo:'',
+      modal: false,
     };
   }
   
@@ -44,15 +46,17 @@ export default class EditEmp extends Component {
       // Saving will only save for that semester, (if tabs more straightforward since the button will be set on loading)
 
       //this should be a function that sets the data in the employee form
+      // TODO redo
       this.setState({data: arg})
       console.log(arg)
       
       if(arg.length !== 0){
         for(let i=0; i<arg.length; i++){
-          this.state.semesters.push(arg[i][0])
+          let tempSem = {name: ''+arg[i]['semester']+' '+arg[i]['year'], semester_id: arg[i]['semester_id']}
+          this.state.semesters.push(tempSem) 
         }
-        this.setState({semSel: arg[0][0]})
-        this.fillEmployeeForm(arg[0][0])
+        this.setState({semSel: arg[0]['semester_id']})
+        this.fillEmployeeForm(arg[0]['semester_id'])
       } else { 
         console.log('no data for employee')
       }
@@ -63,21 +67,28 @@ export default class EditEmp extends Component {
 
   formSubmission = (dataFromChild) => {
     // console.log(dataFromChild);
-    // 1. take the data from the child and send if to the electron main
-    let data = [this.state.semSel, dataFromChild]
+    // 1. take the data from the child
+    // 2. make multiple request the the electron main for the data for the employee
+
+    // console.log(dataFromChild)
+    // TODO add objects of the other elemets (stringths languages etc) to this array.
+    let data = [dataFromChild]
     ipcRenderer.send('edit-post', data)
     ipcRenderer.once('edit-confirm', (event, arg) => {
       //trigger an alert on the screen
       if(arg){
-        alert("Data successfully saved!")
+        this.setState({dbResultInfo: "Data successfully saved!"})
         //reload data object to match data passed to database
         ipcRenderer.send('edit-get', this.state.sid)
         ipcRenderer.once('edit-reply', (event, arg) => {
           this.setState({data: arg})
         })
       } else {
-        alert("Something went wrong, your data might not have been saved!")
+        this.setState({dbResultInfo: "Something went wrong, your data might not have been saved!"})
       }
+      this.setState(prevState => ({
+        modal: !prevState.modal
+      }));
       
     })
   }
@@ -87,50 +98,64 @@ export default class EditEmp extends Component {
     this.fillEmployeeForm(event.target.value)
   }
 
-  fillEmployeeForm = (semester) => {
+  fillEmployeeForm = (semester_id) => {
     for(let i=0; i<this.state.data.length; i++){
-      if(this.state.data[i][0] === semester){
-        this.refs.emp_form.fillForm(this.state.data[i])
+      // eslint-disable-next-line
+      if(this.state.data[i]['semester_id'] == semester_id){ // finds semester 
+        this.refs.emp_form.fillForm(this.state.data[i]) //populates semester data into form
       }
     }
   }
 
+  toggleModal = () => {
+    this.setState(prevState => ({
+      modal: !prevState.modal
+    }));
+  }
+
   render() {
     let semSelOptions = this.state.semesters.map(semester => {
-      let values = semester.split('_')
-      let option = values[1]+" "+values[2]
       return (
-        <option value={semester}>{option}</option>
+        <option value={semester['semester_id']}>{semester['name']}</option>
       )
     })
     return (
-      <Container>
-        <Jumbotron>
-          <Row>
-            <Col>
-              <h1>Edit Employee:</h1>
-            </Col>
-            <Col md={4} sm={6}>
-              <h4>Semester: </h4>
-              <Input type="select" bsSize="sm" value={this.state.semSel} onChange={e => this.changeSem(e) }>
-                {semSelOptions}
-              </Input>
-            </Col>
-          </Row>
-          <hr/>
-          <EmployeeForm ref="emp_form" disabled={true} onRef={ref => (this.emp_form = ref)} formSubmit={this.formSubmission.bind(this)}/>
-          <br/>
-          <Link to="/">
-            <Button color="primary"> Go to Home </Button>
-          </Link>
-          <br/><br/>
-          <h3>To do list: </h3>
-          <p>
-            1. Create and load more verbose datatypes into the parameters
-          </p>
+      <div>
+        <Container>
+          <Jumbotron>
+            <Row>
+              <Col>
+                <h1>Edit Employee:</h1>
+              </Col>
+              <Col md={4} sm={6}>
+                <h4>Semester: </h4>
+                <Input type="select" bsSize="sm" value={this.state.semSel} onChange={e => this.changeSem(e) }>
+                  {semSelOptions}
+                </Input>
+              </Col>
+            </Row>
+            <hr/>
+            <EmployeeForm ref="emp_form" disabled={true} onRef={ref => (this.emp_form = ref)} formSubmit={this.formSubmission.bind(this)}/>
+            <br/><br/>
+            <h3>To do list: </h3>
+            <p>
+              1. Create and load more verbose datatypes into the parameters
+            </p>
 
-        </Jumbotron>
-      </Container>
+          </Jumbotron>
+
+          </Container>
+          <Modal isOpen={this.state.modal} toggle={this.toggleModal} className={this.props.className}>
+          {/* <ModalHeader toggle={this.toggle}>Modal title</ModalHeader> */}
+          <ModalBody>
+            {this.state.dbResultInfo}
+          </ModalBody>
+          <ModalFooter>
+            <Link to={"./"}><Button color="secondary" onClick={this.toggle}>Home</Button></Link>
+            <Button color="primary" onClick={this.toggleModal}>Return</Button>{' '}
+          </ModalFooter>
+        </Modal>
+      </div>
     )
   }
 };

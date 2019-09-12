@@ -14,6 +14,11 @@ export default class EmployeeForm extends Component {
 
     // console.log(this.props);
     this.state = {
+      id: 0,
+      semester_id: 0,
+      semester: '',
+      year: 0,
+
       first_name: '',
       last_name: '',
       preferred_name: '',
@@ -41,7 +46,8 @@ export default class EmployeeForm extends Component {
       certifications: '',
       avg_hours_wk: '',
 
-      employed: 1,
+      // TODO redo
+      // employed: 1,
     };
   }
 
@@ -60,37 +66,42 @@ export default class EmployeeForm extends Component {
   //TODO make sure new data is the full data req
   fillForm = (newData) => {
     this.setState({
-      first_name: newData[4],
-      last_name: newData[3],
-      preferred_name: newData[5],
-      pronouns: newData[6],
-      sid: newData[2],
-      email: newData[7],
-      phone_number: newData[8],
-      shirt_size: newData[9],
+      id:                 newData['id'],
+      first_name:         newData['first_name'],
+      last_name:          newData['last_name'],
+      preferred_name:     newData['preferred_name'],
+      pronouns:           newData['pronouns'],
+      sid:                newData['sid'],
+      email:              newData['email'],
+      phone_number:       newData['phone_number'],
+      shirt_size:         newData['shirt_size'],
 
-      grad_date: newData[10],
-      major: newData[11],
-      college: newData[12],
-      undergrad: newData[13],
-      international: newData[14],
+      grad_date:          newData['grad_date'],
+      major:              newData['major'],
+      college:            newData['college'],
+      undergrad:          newData['undergrad'],
+      international:      newData['international'],
 
-      role: newData[15],
-      semester_start: newData[16],
-      hire_status: newData[17],
-      schedule_sent: newData[18],
-      evc_date: newData[19],
-      pay_rate: newData[20],
-      leave_date: newData[21],
-      leave_reason: newData[22],
-      training_levels: newData[23],
-      certifications: newData[24],
-      avg_hours_wk: newData[25],
+      role:               newData['role'],
+      semester_start:     newData['semester_start'],
+      hire_status:        newData['hire_status'],
+      schedule_sent:      newData['schedule_sent'],
+      evc_date:           newData['evc_date'],
+      pay_rate:           newData['pay_rate'],
+      leave_date:         newData['leave_date'],
+      leave_reason:       newData['leave_reason'],
 
-      courses: newData[26],
-      languages: newData[27],
-      strengths: newData[28],
-      special_interests: newData[29],
+      // TODO redo these as seperate queries that will have seperate calls when fill form is called
+      training_levels:    newData['training_levels'],
+      certifications:     newData['certifications'],
+      
+      avg_hours_wk:       newData['avg_hours_wk'],
+
+      // TODO redo these as seperate queries that will have seperate calls when fill form is called
+      courses:            newData['courses'],
+      languages:          newData['languages'],
+      strengths:          newData['strengths'],
+      special_interests:  newData['special_interests'],
       
     }, ()=>{ console.log(this.state) })
 
@@ -347,14 +358,13 @@ export default class EmployeeForm extends Component {
           <hr/>
         </Form>
 
-        <FormGroup>
+        {/* <FormGroup>
           <Label for="currentlyEmployed">Currently Employed</Label>
-          {/* <Input id="college" value={this.state.college} onChange={e => this.setState({college: e.target.value})} /> */}
           <div>
             <CustomInput type="radio" id="currentlyEmployed1" label="Yes" value={1} checked={this.state.employed === 1} onClick={e => this.setState({employed: 1})}/>
             <CustomInput type="radio" id="currentlyEmployed2" label="No" value={0} checked={this.state.employed === 0} onClick={e => this.setState({employed: 0})}/>
           </div>
-        </FormGroup>
+        </FormGroup> */}
         <Button color="primary" onClick={e => this.submitForm()}>Submit Form</Button>
         <br/>
       </div>  

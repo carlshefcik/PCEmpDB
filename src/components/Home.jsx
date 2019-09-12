@@ -81,6 +81,17 @@ export default class Home extends Component {
                 </Card>
               </Link>
             </Col>
+
+            <Col md={3} sm={6}>
+              <Link to="/Classes">
+                <Card>
+                  <CardBody>
+                    <img top width="100%"  src={newsempic} alt="Card class"/>
+                    <CardText>Manage Classes</CardText>
+                  </CardBody>
+                </Card>
+              </Link>
+            </Col>
           </Row>
           <hr/>
           <h2>Peer connections Database Project</h2>
@@ -88,12 +99,12 @@ export default class Home extends Component {
           <h3>To do list: </h3>
           <p>
             1. (DONE) Create pages and navigation <br/>
-            2. Create deployable react build using <code>npm run build</code> and electron-builder<br/>
+            2. (DONE) Create deployable react build using <code>npm run build</code> and electron-builder<br/>
             3. Create db structure<br/>
-            4. Implement functionality on data entry and retrieval<br/>
-            5. Implemet search<br/>
-            6. Implement queries page<br/>
-            7. Add currently employed checkbox next to submit button in employee forms
+            4. (DONE) Implement functionality on data entry and retrieval<br/>
+            5. (DONE) Implemet search<br/>
+            6. Implement queries page (Semester summary page)<br/>
+            7. (DONE) Add currently employed checkbox next to submit button in employee forms
           </p>
 
           <h3>Optional: </h3>
