@@ -314,22 +314,9 @@ ipcMain.on('class-search-get', (event, arg) => {
 // TODO REDO
 ipcMain.on('semEmployees-get', (event, arg) => {
     console.log(arg);
-    let prevSemEmployees = []
     db.serialize(function(){
-        db.all('SELECT first_name, last_name, sid FROM '+arg, (err, rows)=>{
-            // processes each employee and puts it into an array to be inserted into the front page
-            rows.forEach((e)=>{
-                let employee = []
-                // solution from https://stackoverflow.com/questions/1078118/how-do-i-iterate-over-a-json-structure
-                let obj = e //assigns object in array
-                for (var key in obj){ // key = object attribute name & obj = the object itself
-                    var attrName = key // the arributes name is the key
-                    var attrValue = obj[key] // how to retireve the obj value
-                    employee.push(obj[key])
-                }
-                prevSemEmployees.push(employee)
-            })
-            event.sender.send('semEmployees-reply', prevSemEmployees)
+        db.all(`SELECT first_name, last_name, sid, id FROM employee_data WHERE semester_id=${arg} ORDER BY last_name, first_name`, (err, rows)=>{
+            event.sender.send('semEmployees-reply', rows)
         })
     })
 })

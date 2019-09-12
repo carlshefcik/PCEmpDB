@@ -59,6 +59,17 @@ export default class Home extends Component {
                 </Card>
               </Link>
             </Col>
+
+            <Col md={3} sm={6}>
+              <Link to="/Import">
+                <Card>
+                  <CardBody>
+                    <img top width="100%"  src={importpic} alt="Card import"/>
+                    <CardText>Import old data to the database</CardText>
+                  </CardBody>
+                </Card>
+              </Link>
+            </Col>
             
             <Col md={3} sm={6}>
               <Link to="/NewSemester">
@@ -72,22 +83,22 @@ export default class Home extends Component {
             </Col>
 
             <Col md={3} sm={6}>
-              <Link to="/Import">
+              <Link to="/Classes">
                 <Card>
                   <CardBody>
-                    <img top width="100%"  src={importpic} alt="Card import"/>
-                    <CardText>Import old data to the database</CardText>
+                    <img top width="100%"  src={newsempic} alt="Card class"/>
+                    <CardText>Manage Classes</CardText>
                   </CardBody>
                 </Card>
               </Link>
             </Col>
 
             <Col md={3} sm={6}>
-              <Link to="/Classes">
+              <Link to="/Talent">
                 <Card>
                   <CardBody>
-                    <img top width="100%"  src={newsempic} alt="Card class"/>
-                    <CardText>Manage Classes</CardText>
+                    <img top width="100%"  src={newsempic} alt="Card talent"/>
+                    <CardText>Manage Talent Options</CardText>
                   </CardBody>
                 </Card>
               </Link>

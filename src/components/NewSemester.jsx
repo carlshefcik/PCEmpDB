@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Jumbotron, Container, Button, Row, Col, Input, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Jumbotron, Container, Button, Row, Col, Input, Modal, ModalBody, ModalFooter, ListGroup, ListGroupItem } from 'reactstrap';
 import './Home.css';
 
 import EmployeeForm from "./Employee/EmployeeForm"
@@ -31,10 +31,8 @@ export default class NewSemester extends Component {
   }
 
   componentDidMount() {
-    loadServer();
-    function loadServer(){
-      ipcRenderer.send('semesters-get', null)
-    }
+    ipcRenderer.send('semesters-get', null)
+    
     ipcRenderer.once('semesters-reply', (event, arg) => {
       // This will receive all the info from the employ across all semesters they have been here
       // We need to load the recent semester to the this.state to fill the form and have a selector at the top that lets you select which semester (or it could be individual tabs)
@@ -44,19 +42,18 @@ export default class NewSemester extends Component {
       console.log(arg.length)
       if(arg.length !== 0){
         for(let i=0; i<arg.length; i++){
-          this.state.semesters.push(arg[i])
+          let tempSem = {name: ''+arg[i]['semester']+' '+arg[i]['year'], semester_id: arg[i]['semester_id']}
+          this.state.semesters.push(tempSem) 
         }
-        this.setState({prevSemSel: arg[0]})
+        this.setState({prevSemSel: arg[0]['semester_id']})
       } else { 
         console.log('no semesters!!!?!?!')
       }
 
       // TODO load in the employee list from the semester
-      loadPrevSemList();
-      function loadPrevSemList(){
-        ipcRenderer.send('semEmployees-get', arg[0]); //arg[0] is the prevSemSel
-      }
-      ipcRenderer.once('semEmployees-reply', (event, arg) => {
+
+      ipcRenderer.send('semEmployees-get', arg[0]['semester_id']); //arg[0] is the prevSemSel
+      ipcRenderer.on('semEmployees-reply', (event, arg) => {
         //set the state
         this.setState({prevSemEmployeesList: arg})
       })
@@ -66,12 +63,16 @@ export default class NewSemester extends Component {
       let today = new Date();
       this.setState({nextYearSel: today.getFullYear()})
       let years = [];
-      for (let i=-Math.ceil(arg.length/2); i <= 2; i++){
+      for (let i=-(Math.ceil(arg.length/2) < 7 ? 7 : Math.ceil(arg.length/2)); i <= 2; i++){
         // gets the 7 prevous years and the next 2
         years.push(today.getFullYear() + i);
       }
       this.setState({years: years})
     })
+  }
+  componentWillUnmount() {
+    //this.props.onRef(null)
+    ipcRenderer.removeAllListeners('semEmployees-reply')
   }
 
  
@@ -93,13 +94,14 @@ export default class NewSemester extends Component {
     // opens up a panel below 
     // Panel populates with employees from previous semester and the selected new semester (fi you've already started this process/its an old semester
     // Select employees to move over or move back
-      // Every selection will be its own individual query
+    // Every selection will be its own individual query
     // Back to main menu button on bottom
   }
 
   changePrevSem = (event) => {
     this.setState({prevSemSel: event.target.value})
     //TODO query the database for the a list of all the employees from that semester getting their (first_name, last_name, sid) and storing it in an array.
+    ipcRenderer.send('semEmployees-get', event.target.value);
   }
   markUnemployed = () =>{
     //take list of employees in the current prev select semester list and the remaining employees and update their info in the db
@@ -123,8 +125,9 @@ export default class NewSemester extends Component {
     })
   }
 
-  loadPrevSelectedEmpToForm = () => {
-
+  //Called when clicking on the list item
+  loadPrevSelectedEmpToForm = (event) => {
+    console.log(event.target.value)
   }
 
   toggleModal = () =>{
@@ -135,10 +138,8 @@ export default class NewSemester extends Component {
 
   render() {
     let prevSemSelOptions = this.state.semesters.map(semester => {
-      let values = semester.split('_')
-      let option = values[1].charAt(0).toUpperCase() + values[1].slice(1)+" "+values[2]
       return (
-        <option value={semester}>{option}</option>
+        <option value={semester['semester_id']}>{semester['name']}</option>
       )
     })
     let yearSelOptions = this.state.years.map(year => {
@@ -155,7 +156,7 @@ export default class NewSemester extends Component {
     let prevSemEmployeesList = this.state.prevSemEmployeesList.map(emp => {
       //TODO add functional
       return (
-        <li onClick={this.loadPrevSelectedEmpToForm}>{emp[0]+" "+emp[1]}</li>
+        <ListGroupItem value={emp['id']}>{emp['first_name']+" "+emp['last_name']}</ListGroupItem>
       )
     })
     
@@ -184,11 +185,11 @@ export default class NewSemester extends Component {
                     </Col>
                   </Row>
                   <Row>
-                    <Col>
+                    <Col md={8}>
                       <h5>Click the employee to move to their info from the previous selected semester to the next selected semester: </h5>
-                      <ul>
+                      <ListGroup onClick={e => this.loadPrevSelectedEmpToForm(e)}>
                         {prevSemEmployeesList}
-                      </ul>
+                      </ListGroup>
                       <h5>Mark previous selected semester employees as not employed: </h5>
                       <Button color="danger" onClick={this.markUnemployed}>Mark Unemployed</Button>{' '}
                     </Col>
@@ -257,7 +258,7 @@ export default class NewSemester extends Component {
           <ModalFooter>
             <Button color="secondary" onClick={this.toggleModal}>Return</Button>{' '}
             <Link to={"./"}><Button color="secondary">Home</Button></Link>
-            <Link to={"./search"}><Button color='primary'>Edit Employees</Button></Link>
+            {/* <Link to={"./search"}><Button color='primary'>Edit Employees</Button></Link> */}
           </ModalFooter>
         </Modal>
       </div>
