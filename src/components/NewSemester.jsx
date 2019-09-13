@@ -103,10 +103,6 @@ export default class NewSemester extends Component {
     //TODO query the database for the a list of all the employees from that semester getting their (first_name, last_name, sid) and storing it in an array.
     ipcRenderer.send('semEmployees-get', event.target.value);
   }
-  markUnemployed = () =>{
-    //take list of employees in the current prev select semester list and the remaining employees and update their info in the db
-    //TODO idk if this should be a function or will work
-  }
 
   nextSemEmployeeAdd = (dataFromChild) => {
     // TODO update the data correctly
@@ -138,6 +134,7 @@ export default class NewSemester extends Component {
 
   render() {
     let prevSemSelOptions = this.state.semesters.map(semester => {
+      //TODO maybe make this a table with a button that moves it over
       return (
         <option value={semester['semester_id']}>{semester['name']}</option>
       )
@@ -190,8 +187,6 @@ export default class NewSemester extends Component {
                       <ListGroup onClick={e => this.loadPrevSelectedEmpToForm(e)}>
                         {prevSemEmployeesList}
                       </ListGroup>
-                      <h5>Mark previous selected semester employees as not employed: </h5>
-                      <Button color="danger" onClick={this.markUnemployed}>Mark Unemployed</Button>{' '}
                     </Col>
                   </Row>
                   

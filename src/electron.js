@@ -12,6 +12,14 @@ const sqlite3 = require('sqlite3').verbose()
 // let dbFile = path.join(app.getAppPath(), 'EmployeeDB.db')
 const db = new sqlite3.Database("./Employee_testing.db")
 
+var currentSem = [];
+getCurrentSemester()
+function getCurrentSemester() {
+    db.all(`SELECT * FROM semester_list WHERE year <= strftime('%Y','now') ORDER BY year DESC, semester ASC`, (err, rows)=>{
+        console.log(rows[0])
+        currentSem = rows[0]
+    })
+}
 
 //TODO all these queries need to check if there was anything in the rows before they start trying to access the data (especially the semester specific ones)
 // ! Not Used
@@ -46,7 +54,6 @@ ipcMain.on('edit-get', (event, arg) => {
     //2. Front end parses and creates select from elements
 
     let dbString = `SELECT * FROM semester_list JOIN employee_data ON employee_data.semester_id = semester_list.semester_id WHERE sid='${arg}' ORDER BY year DESC, semester ASC`
-    console.log(dbString)
     db.serialize(function(){
         db.all(dbString, (err, row)=>{ // should only give one row
             event.sender.send('edit-reply', row)
@@ -170,7 +177,6 @@ ipcMain.on('add-post', (event, arg) => {
 
     // 1. Get input variables (semester being saved and all other variables)
     // 2. Add query to DB
-    console.log(arg)
     let semester_id = arg[0]
     let empData = arg[1]
 
@@ -298,6 +304,7 @@ ipcMain.on('class-search-get', (event, arg) => {
         employee_data as e ON cg.sid = e.sid
     WHERE
         cl.class_id = ${arg}
+        AND e.semester_id = ${currentSem['semester_id']}
     GROUP BY
         e.sid, cl.class_id`
 
@@ -311,14 +318,56 @@ ipcMain.on('class-search-get', (event, arg) => {
     })
 })
 
-// TODO REDO
 ipcMain.on('semEmployees-get', (event, arg) => {
-    console.log(arg);
+    // console.log(arg);
     db.serialize(function(){
         db.all(`SELECT first_name, last_name, sid, id FROM employee_data WHERE semester_id=${arg} ORDER BY last_name, first_name`, (err, rows)=>{
             event.sender.send('semEmployees-reply', rows)
         })
     })
+})
+
+//TODO put in correct query here
+ipcMain.on('grades-list-get', (event, arg) => {
+    db.serialize(function(){
+        db.all(`
+        SELECT
+            cl.class_id, sl.subject, cl.number, cg.grade_id, cg.grade, s.semester, s.year
+        FROM
+            class_grades as cg 
+        JOIN
+            class_list as cl ON cg.class_id = cl.class_id
+        JOIN
+            subject_list as sl ON cl.subject_id = sl.subject_id
+        JOIN
+            employee_data as e ON cg.sid = e.sid
+        JOIN
+            semester_list as s ON s.semester_id = cg.semester_id
+        WHERE
+            e.sid = '${arg}'
+        GROUP BY
+            cl.class_id
+        ORDER BY 
+            s.year ASC, s.semester DESC, sl.subject ASC, cl.number ASC
+        `, (err, rows)=>{
+            event.sender.send('grades-list-reply', rows)
+        })
+    })
+})
+
+ipcMain.on('grade-add-post', (event, arg) => {
+    db.serialize(function(){
+        db.run(`INSERT INTO class_grades (sid, class_id, semester_id, grade) VALUES ('${arg['sid']}', ${arg['class_id']}, ${arg['semester_id']}, ${arg['grade']})`, (err) => { 
+            if(err){
+                confirmQuery(false)
+            } else {
+                confirmQuery(true)
+            }
+        })
+    })
+    function confirmQuery(queryErr) {
+        event.sender.send('grade-add-confirm', queryErr)
+    }
 })
 
 

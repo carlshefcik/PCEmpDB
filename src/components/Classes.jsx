@@ -128,10 +128,12 @@ class ManageSections extends Component {
 
     ipcRenderer.once('semesters-reply', (event, arg) => {
       if(arg.length !== 0){
+        let tempSemesters= []
         for(let i=0; i<arg.length; i++){
           let tempSem = {name: ''+arg[i]['semester']+' '+arg[i]['year'], semester_id: arg[i]['semester_id']}
-          this.state.semesters.push(tempSem) 
+          tempSemesters.push(tempSem) 
         }
+        this.setState({semesters: tempSemesters})
         this.setState({semSel: arg[0]['semester_id']})
       } else { 
         console.log('no semesters!!!?!?!')

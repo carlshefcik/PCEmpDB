@@ -2,10 +2,13 @@ import React, { Component } from 'react';
 // eslint-disable-next-line
 import { Link } from 'react-router-dom';
 // eslint-disable-next-line
-import { Jumbotron, Container, Button, Row, Col, Input, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { TabContent, TabPane, Nav, NavItem, NavLink, Jumbotron, Container, Button, Form, FormGroup, Row, Col, Input, Modal, ModalBody, ModalFooter, Table } from 'reactstrap';
+import classnames from 'classnames';
 // import './Home.css';
 
 import EmployeeForm from "./EmployeeForm"
+import $ from "jquery";// eslint-disable-next-line
+
 
 
 const electron = window.require('electron');
@@ -23,6 +26,7 @@ export default class EditEmp extends Component {
       sid:'',
       dbResultInfo:'',
       modal: false,
+      activeTab: '1'
     };
   }
   
@@ -33,6 +37,7 @@ export default class EditEmp extends Component {
     this.setState({sid: sid})
     console.log(sid)
 
+    this.refs.addClass.setSID(sid)
 
     loadPage();
 
@@ -113,6 +118,14 @@ export default class EditEmp extends Component {
     }));
   }
 
+  toggle = (tab) =>{
+    if (this.state.activeTab !== tab) {
+      this.setState({
+        activeTab: tab
+      });
+    }
+  }
+
   render() {
     let semSelOptions = this.state.semesters.map(semester => {
       return (
@@ -122,40 +135,369 @@ export default class EditEmp extends Component {
     return (
       <div>
         <Container>
-          <Jumbotron>
+        <br/>   
+        <Nav tabs>
+          <NavItem>
+            <NavLink
+              className={classnames({ active: this.state.activeTab === '1' })}
+              onClick={() => { this.toggle('1'); }}
+            >
+              <h4>Edit Employee</h4>
+
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink
+              className={classnames({ active: this.state.activeTab === '2' })}
+              onClick={() => { this.toggle('2'); }}
+            >
+              <h4>Add/Remove Grades</h4>
+            </NavLink>
+          </NavItem>
+        </Nav>
+
+        <br/>
+
+        <TabContent activeTab={this.state.activeTab}>
+          <TabPane tabId="1">
             <Row>
-              <Col>
-                <h1>Edit Employee:</h1>
-              </Col>
-              <Col md={4} sm={6}>
-                <h4>Semester: </h4>
-                <Input type="select" bsSize="sm" value={this.state.semSel} onChange={e => this.changeSem(e) }>
-                  {semSelOptions}
-                </Input>
+              <Col sm="12">
+                <Container>
+                  <Jumbotron>
+                    <Row>
+                      <Col md={4} sm={6}>
+                        <h4>Semester: </h4>
+                        <Input type="select" bsSize="sm" value={this.state.semSel} onChange={e => this.changeSem(e) }>
+                          {semSelOptions}
+                        </Input>
+                      </Col>
+                    </Row>
+                    <hr/>
+                    <EmployeeForm ref="emp_form" disabled={true} onRef={ref => (this.emp_form = ref)} formSubmit={this.formSubmission.bind(this)}/>
+                    <br/><br/>
+                    <h3>To do list: </h3>
+                    <p>
+                      1. Create and load more verbose datatypes into the parameters
+                    </p>
+                  </Jumbotron>
+                </Container>
+                <Modal isOpen={this.state.modal} toggle={this.toggleModal} className={this.props.className}>
+                  {/* <ModalHeader toggle={this.toggle}>Modal title</ModalHeader> */}
+                  <ModalBody>
+                    {this.state.dbResultInfo}
+                  </ModalBody>
+                  <ModalFooter>
+                    <Link to={"./"}><Button color="secondary" onClick={this.toggle}>Home</Button></Link>
+                    <Button color="primary" onClick={this.toggleModal}>Return</Button>{' '}
+                  </ModalFooter>
+                </Modal>
               </Col>
             </Row>
-            <hr/>
-            <EmployeeForm ref="emp_form" disabled={true} onRef={ref => (this.emp_form = ref)} formSubmit={this.formSubmission.bind(this)}/>
-            <br/><br/>
-            <h3>To do list: </h3>
-            <p>
-              1. Create and load more verbose datatypes into the parameters
-            </p>
-
-          </Jumbotron>
-
-          </Container>
-          <Modal isOpen={this.state.modal} toggle={this.toggleModal} className={this.props.className}>
-          {/* <ModalHeader toggle={this.toggle}>Modal title</ModalHeader> */}
-          <ModalBody>
-            {this.state.dbResultInfo}
-          </ModalBody>
-          <ModalFooter>
-            <Link to={"./"}><Button color="secondary" onClick={this.toggle}>Home</Button></Link>
-            <Button color="primary" onClick={this.toggleModal}>Return</Button>{' '}
-          </ModalFooter>
-        </Modal>
+          </TabPane>
+          <TabPane tabId="2">
+            <Row>
+              <Col>
+                <AddClass ref="addClass" onRef={ref => (this.addClass = ref)}/>
+              </Col>
+            </Row>
+          </TabPane>
+        </TabContent>
+      </Container>
+      
       </div>
+    )
+  }
+};
+
+
+class AddClass extends Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      sid: '',
+      semesters: [],
+      semSel: '',
+      classes: [],
+      subjectClasses: [],
+      classSel: '',
+      subjects: [],
+      subjectSel: '',
+
+      gradesList: [],
+
+      classGrade_val: '',
+      gradeTypes: [
+        {grade: "A+", value: 4.0},
+        {grade: "A", value: 3.7},
+        {grade: "A-", value: 3.4},
+        {grade: "B+", value: 3.3},
+        {grade: "B", value: 3.0},
+        {grade: "B-", value: 2.7},
+        {grade: "C+", value: 2.3},
+        {grade: "C", value: 2.0},
+        {grade: "C-", value: 1.7},
+        {grade: "D+", value: 1.3},
+        {grade: "D", value: 1.0},
+        {grade: "D-", value: 0.7},
+        {grade: "F", value: 0.0},
+      ],
+      gradeTypeSel: 4.0
+    }
+  }
+
+  componentDidMount() {
+    ipcRenderer.send('classes-get', null)
+    ipcRenderer.send('subject-get', null)
+    ipcRenderer.send('semesters-get', null)
+    // Pass the student ID here
+
+    ipcRenderer.once('semesters-reply', (event, arg) => {
+      if(arg.length !== 0){
+        let tempSemesters= []
+        for(let i=0; i<arg.length; i++){
+          let tempSem = {name: ''+arg[i]['semester']+' '+arg[i]['year'], semester_id: arg[i]['semester_id']}
+          tempSemesters.push(tempSem) 
+        }
+        this.setState({semesters: tempSemesters})
+        this.setState({semSel: arg[0]['semester_id']})
+      } else { 
+        console.log('no semesters!!!?!?!')
+      }
+    })
+    ipcRenderer.once('classes-reply', (event, arg) => {
+      if(arg.length !== 0){
+        for(let i=0; i<arg.length; i++){
+          let tempClass = {number: arg[i]['number'], class_id: arg[i]['class_id'], subject_id: arg[i]['subject_id']}
+          this.state.classes.push(tempClass) 
+        }
+        // this.setState({classSel: arg[0]['class_id']})
+      } else {
+        console.log('no classes!!!?!?!')
+      }
+    })
+
+    ipcRenderer.once('subject-reply', (event, arg) => {
+      if(arg.length !== 0){
+        for(let i=0; i<arg.length; i++){
+          let tempSubject = {subject: arg[i]['subject'], subject_id: arg[i]['subject_id']}
+          this.state.subjects.push(tempSubject) 
+        }
+        // this.setState({subjectSel: arg[0]['subject_id']}) 
+        this.updateClasses(arg[0]['subject_id']) //sets the subject select and the class select options
+      } else { 
+        console.log('no subjects!!!?!?!')
+      }
+    })
+
+    ipcRenderer.on('grades-list-reply', (event, arg) => {
+      if(arg.length !== 0){
+        let tempGradesList = []
+        for(let i=0; i<arg.length; i++){
+          let tempGrade = {
+            grade_id: arg[i]['grade_id'],
+            grade: this.grade(arg[i]['grade']), 
+            value: arg[i]['grade'], 
+            class_id: arg[i]['class_id'],
+            class: arg[i]['subject']+' '+arg[i]['number'],
+            semester: arg[i]['semester']+' '+arg[i]['year'],
+          }
+          tempGradesList.push(tempGrade) 
+        }
+        this.setState({gradesList: tempGradesList})
+      } else {
+        console.log('no classes!!!?!?!')
+      }
+    })
+
+  }
+
+  grade = (gp) => {
+    if(gp == 4)
+      return 'A+'
+    else if (gp == 3.7)
+      return 'A'
+    else if (gp == 3.4)
+      return 'A-'
+    else if (gp == 3.3)
+      return 'B+'
+    else if (gp == 3.0)
+      return 'B'
+    else if (gp == 2.7)
+      return 'B-'
+    else if (gp == 2.3)
+      return 'C+'
+    else if (gp == 2.0)
+      return 'C'
+    else if (gp == 1.7)
+      return 'C-'
+    else if (gp == 1.3)
+      return 'D+'
+    else if (gp == 1.0)
+      return 'D'
+    else if (gp == 0.7)
+      return 'D-'
+    else if (gp == 0)
+      return 'F'
+  }
+
+  componentWillUnmount() {
+    //this.props.onRef(null)
+    ipcRenderer.removeAllListeners('grades-list-reply')
+  }
+
+  addClassGrade = () => {
+    let data = {
+      semester_id: this.state.semSel,
+      class_id: this.state.classSel,
+      grade: this.state.gradeTypeSel,
+      sid: this.state.sid
+    }
+    console.log(data)
+
+    ipcRenderer.send('grade-add-post', data)
+    ipcRenderer.once('grade-add-confirm', (event, arg) => {
+      ipcRenderer.send('grades-list-get', this.state.sid)      
+      console.log(arg) // checks to see if its successfull
+    })
+  }
+  
+  setSID = (sid) => {
+    console.log(sid)
+    this.setState({sid: sid})
+    ipcRenderer.send('grades-list-get', sid)
+  }
+  
+  onFormSubmit = (e) => {
+    e.preventDefault()
+    this.addClassGrade();
+  }
+  changeSem = (event) => {
+    this.setState({semSel: event.target.value})
+  }
+  changeSubject = (event) => {
+    this.setState({subjectSel: event.target.value})
+    this.updateClasses(event.target.value)
+  }
+  changeClass = (event) => {
+    this.setState({classSel: event.target.value})
+  }
+  changeGradeType = (event) => {
+    this.setState({gradeTypeSel: event.target.value})
+  }
+  updateClasses = (subject_id) => {
+    console.log(subject_id)
+    let tempData = this.state.classes
+    let tempSC = []
+    // Changes class number selection here or do it in the render
+    for(let i=0; i < tempData.length; i++){
+      if(tempData[i]['subject_id'] == subject_id)
+        tempSC.push(tempData[i])
+    }
+    this.setState({subjectClasses: tempSC})
+    if(tempSC.length >= 1)
+      this.setState({classSel: tempSC[0]['class_id']})
+    else
+      this.setState({classSel: null})
+  }
+
+  removeClass = (event) => {
+    console.log(event)
+  }
+  
+
+  render() {
+    let semSelOptions = this.state.semesters.map(semester => {
+      return (
+        <option value={semester['semester_id']}>{semester['name']}</option>
+      )
+    })
+    let classOptions = this.state.subjectClasses.map(tempClass => {
+      return (
+        <option value={tempClass['class_id']}>{tempClass['number']}</option>
+      )
+    })
+    let subjectOptions = this.state.subjects.map(subject => {
+      return (
+        <option value={subject['subject_id']}>{subject['subject']}</option>
+      )
+    })
+    let gradeOptions = this.state.gradeTypes.map(grade => {
+      return (
+        <option value={grade['value']}>{grade['grade']}</option>
+      )
+    })
+    let classesList = this.state.gradesList.map(grade => {
+      return (
+        <tr>
+          <td>{grade['semester']}</td>
+          <td>{grade['class']}</td>
+          <td>{grade['grade']}</td>
+          <td><Button onClick={(e) => this.removeClass(grade['grade_id'])} size="sm" color="danger">X</Button></td>
+        </tr>
+      )
+    })
+
+    //let element = React.createElement('Button', { children:"test"});
+    return (
+      <div>
+        <Form onSubmit={this.onFormSubmit}>
+          <Row form>
+            <Col md={3} sm={6}>
+              <Input type="select" bsSize="lg" value={this.state.semSel} onChange={e => this.changeSem(e) }>
+                {semSelOptions}
+              </Input>
+            </Col>
+            <Col md={2} sm={6}>
+              <FormGroup>
+                <Input type="select" bsSize="lg" value={this.state.subjectSel} onChange={e => this.changeSubject(e) }>
+                  {subjectOptions}
+                </Input>
+              </FormGroup>
+            </Col>
+            <Col md={2} sm={6}>
+              <FormGroup>
+                <Input type="select" bsSize="lg" value={this.state.classSel} onChange={e => this.changeClass(e) }>
+                  {classOptions}
+                </Input>
+              </FormGroup>
+            </Col>
+            <Col md={2} sm={6}>
+              <FormGroup>
+                <Input type="select" bsSize="lg" value={this.state.gradeTypeSel} onChange={e => this.changeGradeType(e) }>
+                  {gradeOptions}
+                </Input>
+              </FormGroup>
+            </Col>
+            <Col md={3} sm={6}>
+              <FormGroup>
+                {/* textright doesnt work */}
+                <Button type="submit" className="text-center" color="primary" size="lg" block>Add Grade</Button>
+              </FormGroup>
+            </Col>
+          </Row>
+        </Form>
+        <hr/>
+        <Row>
+          <Col md={8}>
+            <Table borderless hover>
+              <thead>
+                <tr>
+                  <th>Semester</th>
+                  <th>Class</th>
+                  <th>Grade</th>
+                  <th>Remove</th>
+                </tr>
+              </thead>
+              <tbody>
+                {classesList}
+              </tbody>
+            </Table>
+          </Col>
+        </Row>
+        <hr/>
+        {/* <Button onClick={e => console.log(this.state)}>log state</Button> */}
+      </div>
+      
     )
   }
 };

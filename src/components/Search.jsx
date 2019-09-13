@@ -489,6 +489,7 @@ class DataTable2 extends Component {
           </tbody>
         </table>
         <hr/>
+        <p>Currently showing grades for currently employed students</p>
         {/* <Button onClick={e => console.log(this.state)}>log state</Button> */}
       </div>
       

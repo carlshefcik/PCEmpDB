@@ -34,6 +34,7 @@ db.serialize(function(){
 
         db.run(`
         CREATE TABLE IF NOT EXISTS class_grades (
+            grade_id    INTEGER PRIMARY KEY AUTOINCREMENT,
             sid         TEXT,
             class_id    INTEGER,
             semester_id INTEGER,
@@ -111,10 +112,10 @@ db.serialize(function(){
 
     function gradesFill(){
         db.run(`INSERT INTO class_grades (sid, class_id, semester_id, grade) VALUES ('111111111', 1, 2, 3.0)`)
-        // db.run(`INSERT INTO class_grades (sid, class_id, semester_id, grade) VALUES ('123456789', 1, 1, 4.0)`)
-        // db.run(`INSERT INTO class_grades (sid, class_id, semester_id, grade) VALUES ('010517091', 1, 1, 4.0)`)
-        // db.run(`INSERT INTO class_grades (sid, class_id, semester_id, grade) VALUES ('010517091', 2, 1, 3.0)`)
-        // db.run(`INSERT INTO class_grades (sid, class_id, semester_id, grade) VALUES ('010517091', 3, 2, 4.0)`)
+        db.run(`INSERT INTO class_grades (sid, class_id, semester_id, grade) VALUES ('123456789', 1, 1, 4.0)`)
+        db.run(`INSERT INTO class_grades (sid, class_id, semester_id, grade) VALUES ('010517091', 1, 1, 4.0)`)
+        db.run(`INSERT INTO class_grades (sid, class_id, semester_id, grade) VALUES ('010517091', 2, 1, 3.0)`)
+        db.run(`INSERT INTO class_grades (sid, class_id, semester_id, grade) VALUES ('010517091', 3, 2, 4.0)`)
     }
     
     function employeeFill(){
@@ -218,12 +219,12 @@ db.serialize(function(){
         }
     }
 
-    // getCurrentSemester()
-    // function getCurrentSemester() {
-    //     db.all(`SELECT * FROM semester_list ORDER BY year DESC, semester ASC`, (err, rows)=>{
-    //         console.log(rows[0])
-    //     })
-    // }
+    getCurrentSemester()
+    function getCurrentSemester() {
+        db.all(`SELECT * FROM semester_list WHERE year <= strftime('%Y','now') ORDER BY year DESC, semester ASC`, (err, rows)=>{
+            console.log(rows[0])
+        })
+    }
 
     // let dbString = `SELECT * FROM semester_list JOIN employee_data ON employee_data.semester_id = semester_list.semester_id WHERE sid='010517091'`
     // console.log(dbString)
@@ -268,14 +269,42 @@ db.serialize(function(){
             employee_data as e ON cg.sid = e.sid
         WHERE
             cl.class_id = 1
+            AND e.semester_id = 3
         GROUP BY
-            e.sid, cl.class_id
-        `, (err, rows)=>{ 
+            e.sid, cl.class_id`
+        , (err, rows)=>{ 
             console.log('-----------------------------------------------------')
             console.log(err)
             console.log(rows)
         })
     })
+    
+    // db.serialize(function(){
+    //     db.all(`
+    //     SELECT
+    //         cl.class_id, sl.subject, cl.number, cg.grade_id, cg.grade, s.semester, s.year
+    //     FROM
+    //         class_grades as cg 
+    //     JOIN
+    //         class_list as cl ON cg.class_id = cl.class_id
+    //     JOIN
+    //         subject_list as sl ON cl.subject_id = sl.subject_id
+    //     JOIN
+    //         employee_data as e ON cg.sid = e.sid
+    //     JOIN
+    //         semester_list as s ON s.semester_id = cg.semester_id
+    //     WHERE
+    //         e.sid = '010517091'
+    //     GROUP BY
+    //         cl.class_id
+    //     ORDER BY 
+    //         s.year ASC, s.semester DESC
+    //     `, (err, rows)=>{ 
+    //         console.log('-----------------------------------------------------')
+    //         console.log(err)
+    //         console.log(rows)
+    //     })
+    // })
     
     
 

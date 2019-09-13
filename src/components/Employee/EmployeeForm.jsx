@@ -294,6 +294,12 @@ export default class EmployeeForm extends Component {
                     <Input id="leave_reason" value={this.state.leave_reason} onChange={e => this.setState({leave_reason: e.target.value})} />
                   </FormGroup>
                 </Col>
+                <Col md={3} sm={6}>
+                  <FormGroup>
+                    <Label for="avg_hours">Avg Hours/Wk</Label>
+                    <Input id="avg_hours" value={this.state.avg_hours_wk} onChange={e => this.setState({avg_hours_wk: e.target.value})} />
+                  </FormGroup>
+                </Col>
               </Row>
 
               <Row>
@@ -307,12 +313,6 @@ export default class EmployeeForm extends Component {
                   <FormGroup>
                     <Label for="certifications">Certifications</Label>
                     <Input id="certifications" value={this.state.certifications} onChange={e => this.setState({certifications: e.target.value})} />
-                  </FormGroup>
-                </Col>
-                <Col md={3} sm={6}>
-                  <FormGroup>
-                    <Label for="avg_hours">Avg Hours/Wk</Label>
-                    <Input id="avg_hours" value={this.state.avg_hours_wk} onChange={e => this.setState({avg_hours_wk: e.target.value})} />
                   </FormGroup>
                 </Col>
               </Row>
