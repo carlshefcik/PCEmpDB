@@ -47,9 +47,7 @@ function getCurrentSemester() {
 
 
 // for EditEmp page
-ipcMain.on('edit-get', (event, arg) => {
-    //TODO I think it should get the employee and search their id in every semester table and return all the tables they are in and the front will load the most recent semester and say what semester with a large selector at the top
-    
+ipcMain.on('edit-get', (event, arg) => {    
     //1. Make query that joins semester_list to employee_data
     //2. Front end parses and creates select from elements
 
@@ -71,14 +69,15 @@ ipcMain.on('edit-post', (event, arg) => {
         last_name =            '${empData['last_name']}'
         ,first_name =          '${empData['first_name']}'
         ,preferred_name =      '${empData['preferred_name']}'
-        ,pronouns =            ${empData['pronouns']}
+        ,pronoun_id =          ${empData['pronoun_id']}
         ,email =               '${empData['email']}'
         ,phone_number =        '${empData['phone_number']}'
         ,shirt_size =          ${empData['shirt_size']}
         ,grad_date =           '${empData['grad_date']}'
         ,major =               '${empData['major']}'
         ,college =             '${empData['college']}'
-        ,undergrad =           ${empData['undergrad']}
+        ,degree =              ${empData['degree']}
+        ,transfer =            ${empData['transfer']}
         ,international =       ${empData['international']}
         ,role  =               ${empData['role']}
         ,semester_start =      '${empData['semester_start']}'
@@ -88,13 +87,7 @@ ipcMain.on('edit-post', (event, arg) => {
         ,pay_rate =            ${empData['pay_rate']}
         ,leave_date =          '${empData['leave_date']}'
         ,leave_reason =        '${empData['leave_reason']}'
-        ,training_levels =     '${empData['training_levels']}'
-        ,certifications =      '${empData['certifications']}'
         ,avg_hours_wk =        ${empData['avg_hours_wk']}
-        ,courses =             '${empData['courses']}'
-        ,languages =           '${empData['languages']}'
-        ,strengths =           '${empData['strengths']}'
-        ,special_interests =   '${empData['special_interests']}'
         WHERE 
         id =           ${empData['id']}`
         , (err)=>{ 
@@ -169,6 +162,8 @@ ipcMain.on('subject-create-post', (event, arg) => {
 
 ipcMain.on('class-manage-post', (event, arg) => {
     console.log(arg)
+    // TODO create a table in the db that stores class sections with the semester_id and class_id
+    // TODO create a table in the db that stores profesors, table that stores Professors => Class Sections, table that stores Employee => Class sections
     event.sender.send('class-manage-confirm', 'success')
 })
 
@@ -179,41 +174,68 @@ ipcMain.on('add-post', (event, arg) => {
     // 2. Add query to DB
     let semester_id = arg[0]
     let empData = arg[1]
+    console.log(arg);
+    let queryString = `INSERT INTO employee_data 
+    (
+        semester_id
+        ,sid
+        ,last_name
+        ,first_name
+        ,preferred_name
+        ,pronoun_id
+        ,email
+        ,phone_number
+        ,shirt_size
+        ,grad_date
+        ,major
+        ,college
+        ,degree
+        ,transfer
+        ,international
+        ,role
+        ,semester_start
+        ,hire_status
+        ,schedule_sent
+        ,evc_date
+        ,pay_rate
+        ,leave_date
+        ,leave_reason
+        ,avg_hours_wk
+        ) 
+    VALUES (
+        ${semester_id}
+        ,'${empData['sid']}'
+        ,'${empData['last_name']}'
+        ,'${empData['first_name']}'
+        ,'${empData['preferred_name']}'
+        ,${empData['pronoun_id']}
+        ,'${empData['email']}'
+        ,'${empData['phone_number']}'
+        ,${empData['shirt_size']}
+        ,'${empData['grad_date']}'
+        ,'${empData['major']}'
+        ,'${empData['college']}'
+        ,${empData['degree']}
+        ,${empData['transfer']}
+        ,${empData['international']}
+        ,${empData['role']}
+        ,'${empData['semester_start']}'
+        ,'${empData['hire_status']}'
+        ,${empData['schedule_sent']}
+        ,'${empData['evc_date']}'
+        ,${empData['pay_rate']}
+        ,'${empData['leave_date']}'
+        ,'${empData['leave_reason']}'
+        ,${empData['avg_hours_wk']}
+        )`
+
+    console.log(queryString)
 
     // 3. Add to employee_data table 
     db.serialize(function(){
-        db.run('INSERT INTO employee_data (semester_id, sid, last_name, first_name, preferred_name, pronouns, email, phone_number, shirt_size, grad_date, major, college, undergrad, international, role, semester_start, hire_status, schedule_sent, evc_date, pay_rate, leave_date, leave_reason, training_levels, certifications, avg_hours_wk, courses, languages, strengths, special_interests) VALUES ($semester_id, $sid, $last_name, $first_name, $preferred_name, $pronouns, $email, $phone_number, $shirt_size, $grad_date, $major, $college, $undergrad, $international, $role, $semester_start, $hire_status, $schedule_sent, $evc_date, $pay_rate, $leave_date, $leave_reason, $training_levels, $certifications, $avg_hours_wk, $courses, $languages, $strengths, $special_interests)', {
-            $semester_id:       semester_id, 
-            $last_name:         empData['last_name'], 
-            $first_name:        empData['first_name'], 
-            $preferred_name:    empData['preferred_name'], 
-            $pronouns:          empData['pronouns'], 
-            $email:             empData['email'], 
-            $phone_number:      empData['phone_number'],
-            $shirt_size:        empData['shirt_size'], 
-            $grad_date:         empData['grad_date'], 
-            $major:             empData['major'], 
-            $college:           empData['college'], 
-            $undergrad:         empData['undergrad'], 
-            $international:     empData['international'], 
-            $role:              empData['role'], 
-            $semester_start:    empData['semester_start'], 
-            $hire_status:       empData['hire_status'], 
-            $schedule_sent:     empData['schedule_sent'], 
-            $evc_date:          empData['evc_date'], 
-            $pay_rate:          empData['pay_rate'], 
-            $leave_date:        empData['leave_date'], 
-            $leave_reason:      empData['leave_reason'], 
-            $training_levels:   empData['training_levels'], 
-            $certifications:    empData['certifications'], 
-            $avg_hours_wk:      empData['avg_hours_wk'], 
-            $courses:           empData['courses'], 
-            $languages:         empData['languages'], 
-            $strengths:         empData['strengths'], 
-            $special_interests: empData['special_interests'],
-            $sid:               empData['sid']
-        }, (err)=>{ 
+        db.run(queryString, (err)=>{ 
             if(err){
+                console.log(err)
                 confirmQuery(false)
             } else {
                 confirmQuery(true)
@@ -266,7 +288,7 @@ ipcMain.on('search-get', (event, arg) => {
         }
         
         if(arg[1]){ dbString += ' AND role=0' }
-        //TODO this needs to know if there was something before so it just adds an or
+
         if(arg[2]){
             if(arg[1]){ dbString += ' OR role=1' } else { dbString += ' AND role=1' }
         }
@@ -327,7 +349,6 @@ ipcMain.on('semEmployees-get', (event, arg) => {
     })
 })
 
-//TODO put in correct query here
 ipcMain.on('grades-list-get', (event, arg) => {
     db.serialize(function(){
         db.all(`
@@ -369,7 +390,241 @@ ipcMain.on('grade-add-post', (event, arg) => {
         event.sender.send('grade-add-confirm', queryErr)
     }
 })
+ipcMain.on('grade-remove-post', (event, arg) => {
+    db.serialize(function(){
+        db.run(`DELETE FROM class_grades WHERE grade_id=${arg}`, (err) => { 
+            if(err){
+                confirmQuery(false)
+            } else {
+                confirmQuery(true)
+            }
+        })
+    })
+    function confirmQuery(queryErr) {
+        event.sender.send('grade-remove-confirm', queryErr)
+    }
+})
 
+ipcMain.on('training-levels-get', (event, arg) => {
+    db.serialize(function(){
+        db.all(`SELECT * FROM training_levels ORDER BY training_level ASC`, (err, rows)=>{
+            event.sender.send('training-levels-reply', rows)
+        })
+    })
+})
+ipcMain.on('training-level-create-post', (event, arg) => {
+    db.serialize(function(){
+        db.run(`INSERT INTO training_levels (training_level) VALUES ('${arg}')`, (err) => { 
+            if(err){ confirmQuery(false) } else { confirmQuery(true) }
+        })
+    })
+    function confirmQuery(queryErr) { event.sender.send('training-level-create-confirm', queryErr) }
+})
+ipcMain.on('training-level-remove-post', (event, arg) => {
+    db.serialize(function(){
+        db.run(`DELETE FROM training_levels WHERE training_level_id=${arg}`, (err) => { 
+            if(err){ confirmQuery(false) } else { confirmQuery(true) }
+        })
+    })
+    function confirmQuery(queryErr) { event.sender.send('training-level-remove-confirm', queryErr) }
+})
+ipcMain.on('training-level-list-get', (event, arg) => {
+    db.serialize(function(){
+        db.all(`SELECT * FROM assigned_training_level JOIN training_levels ON training_levels.training_level_id=assigned_training_level.training_level_id WHERE sid='${arg}' ORDER BY training_id ASC`, (err, rows)=>{
+            event.sender.send('training-level-list-reply', rows)
+        })
+    })
+})
+ipcMain.on('training-level-assign-post', (event, arg) => {
+    db.serialize(function(){
+        db.run(`INSERT INTO assigned_training_level (training_level_id, semester_id, sid) VALUES (${arg[0]}, ${arg[1]}, '${arg[2]}')`, (err) => { 
+            if(err){ console.log(err); confirmQuery(false) } else { confirmQuery(true) }
+        })
+    })
+    function confirmQuery(queryErr) { event.sender.send('training-level-assign-confirm', queryErr) }
+})
+ipcMain.on('training-level-assign-remove-post', (event, arg) => {
+    db.serialize(function(){
+        db.run(`DELETE FROM assigned_training_level WHERE training_id=${arg}`, (err) => { 
+            if(err){ confirmQuery(false) } else { confirmQuery(true) }
+        })
+    })
+    function confirmQuery(queryErr) { event.sender.send('training-level-assign-remove-confirm', queryErr) }
+})
+
+ipcMain.on('certifications-get', (event, arg) => {
+    db.serialize(function(){
+        db.all(`SELECT * FROM certifications ORDER BY certification ASC`, (err, rows)=>{
+            event.sender.send('certifications-reply', rows)
+        })
+    })
+})
+ipcMain.on('certification-create-post', (event, arg) => {
+    db.serialize(function(){
+        db.run(`INSERT INTO certifications (certification) VALUES ('${arg}')`, (err) => { 
+            if(err){ confirmQuery(false) } else { confirmQuery(true) }
+        })
+    })
+    function confirmQuery(queryErr) { event.sender.send('certification-create-confirm', queryErr) }
+})
+ipcMain.on('certification-remove-post', (event, arg) => {
+    db.serialize(function(){
+        db.run(`DELETE FROM certifications WHERE certification_id=${arg}`, (err) => { 
+            if(err){ confirmQuery(false) } else { confirmQuery(true) }
+        })
+    })
+    function confirmQuery(queryErr) { event.sender.send('certification-remove-confirm', queryErr) }
+})
+ipcMain.on('certification-list-get', (event, arg) => {
+    db.serialize(function(){
+        db.all(`SELECT * FROM assigned_certifications JOIN certifications ON certifications.certification_id=assigned_certifications.certification_id WHERE sid='${arg}' ORDER BY assigned_cert_id ASC`, (err, rows)=>{
+            event.sender.send('certification-list-reply', rows)
+        })
+    })
+})
+ipcMain.on('certification-assign-post', (event, arg) => {
+    db.serialize(function(){
+        db.run(`INSERT INTO assigned_certifications (certification_id, semester_id, sid) VALUES (${arg[0]}, ${arg[1]}, '${arg[2]}')`, (err) => { 
+            if(err){ console.log(err); confirmQuery(false) } else { confirmQuery(true) }
+        })
+    })
+    function confirmQuery(queryErr) { event.sender.send('certification-assign-confirm', queryErr) }
+})
+ipcMain.on('certification-assign-remove-post', (event, arg) => {
+    db.serialize(function(){
+        db.run(`DELETE FROM assigned_certifications WHERE assigned_cert_id=${arg}`, (err) => { 
+            if(err){ confirmQuery(false) } else { confirmQuery(true) }
+        })
+    })
+    function confirmQuery(queryErr) { event.sender.send('certification-assign-remove-confirm', queryErr) }
+})
+
+
+ipcMain.on('languages-get', (event, arg) => {
+    db.serialize(function(){
+        db.all(`SELECT * FROM languages ORDER BY language ASC`, (err, rows)=>{
+            event.sender.send('languages-reply', rows)
+        })
+    })
+})
+ipcMain.on('language-create-post', (event, arg) => {
+    db.serialize(function(){
+        db.run(`INSERT INTO languages (language) VALUES ('${arg}')`, (err) => { 
+            if(err){ confirmQuery(false) } else { confirmQuery(true) }
+        })
+    })
+    function confirmQuery(queryErr) { event.sender.send('language-create-confirm', queryErr) }
+})
+ipcMain.on('language-remove-post', (event, arg) => {
+    db.serialize(function(){
+        db.run(`DELETE FROM languages WHERE language_id=${arg}`, (err) => { 
+            if(err){ confirmQuery(false) } else { confirmQuery(true) }
+        })
+    })
+    function confirmQuery(queryErr) { event.sender.send('language-remove-confirm', queryErr) }
+})
+ipcMain.on('language-list-get', (event, arg) => {
+    db.serialize(function(){
+        db.all(`SELECT * FROM assigned_languages JOIN languages ON languages.language_id=assigned_languages.language_id WHERE sid='${arg}' ORDER BY assigned_language_id ASC`, (err, rows)=>{
+            event.sender.send('language-list-reply', rows)
+        })
+    })
+})
+ipcMain.on('language-assign-post', (event, arg) => {
+    db.serialize(function(){
+        db.run(`INSERT INTO assigned_languages (language_id, semester_id, sid) VALUES (${arg[0]}, ${arg[1]}, '${arg[2]}')`, (err) => { 
+            if(err){ console.log(err); confirmQuery(false) } else { confirmQuery(true) }
+        })
+    })
+    function confirmQuery(queryErr) { event.sender.send('language-assign-confirm', queryErr) }
+})
+ipcMain.on('language-assign-remove-post', (event, arg) => {
+    db.serialize(function(){
+        db.run(`DELETE FROM assigned_languages WHERE assigned_language_id=${arg}`, (err) => { 
+            if(err){ confirmQuery(false) } else { confirmQuery(true) }
+        })
+    })
+    function confirmQuery(queryErr) { event.sender.send('language-assign-remove-confirm', queryErr) }
+})
+
+ipcMain.on('pronouns-get', (event, arg) => {
+    db.serialize(function(){
+        db.all(`SELECT * FROM pronouns ORDER BY pronoun ASC`, (err, rows)=>{
+            event.sender.send('pronouns-reply', rows)
+        })
+    })
+})
+ipcMain.on('pronoun-create-post', (event, arg) => {
+    db.serialize(function(){
+        db.run(`INSERT INTO pronouns (pronoun) VALUES ('${arg}')`, (err) => { 
+            if(err){ confirmQuery(false) } else { confirmQuery(true) }
+        })
+    })
+    function confirmQuery(queryErr) { event.sender.send('pronoun-create-confirm', queryErr) }
+})
+ipcMain.on('pronoun-remove-post', (event, arg) => {
+    db.serialize(function(){
+        db.run(`DELETE FROM pronouns WHERE pronoun_id=${arg}`, (err) => { 
+            if(err){ confirmQuery(false) } else { confirmQuery(true) }
+        })
+    })
+    function confirmQuery(queryErr) { event.sender.send('pronoun-remove-confirm', queryErr) }
+})
+
+ipcMain.on('strengths-get', (event, arg) => {
+    db.serialize(function(){
+        db.all(`SELECT * FROM strengths ORDER BY strength ASC`, (err, rows)=>{
+            event.sender.send('strengths-reply', rows)
+        })
+    })
+})
+ipcMain.on('strengths-list-get', (event, arg) => {
+    db.serialize(function(){
+        db.all(`SELECT * FROM assigned_strengths JOIN strengths ON strengths.strength_id=assigned_strengths.strength_id WHERE sid='${arg}' ORDER BY assigned_strength_id ASC`, (err, rows)=>{
+            event.sender.send('strengths-list-reply', rows)
+        })
+    })
+})
+ipcMain.on('strengths-assign-post', (event, arg) => {
+    db.serialize(function(){
+        db.run(`INSERT INTO assigned_strengths (strength_id, semester_id, sid) VALUES (${arg[0]}, ${arg[1]}, '${arg[2]}')`, (err) => { 
+            if(err){ console.log(err); confirmQuery(false) } else { confirmQuery(true) }
+        })
+    })
+    function confirmQuery(queryErr) { event.sender.send('strengths-assign-confirm', queryErr) }
+})
+ipcMain.on('strengths-assign-remove-post', (event, arg) => {
+    db.serialize(function(){
+        db.run(`DELETE FROM assigned_strengths WHERE assigned_strength_id=${arg}`, (err) => { 
+            if(err){ confirmQuery(false) } else { confirmQuery(true) }
+        })
+    })
+    function confirmQuery(queryErr) { event.sender.send('strengths-assign-remove-confirm', queryErr) }
+})
+
+ipcMain.on('specInt-get', (event, arg) => {
+    db.serialize(function(){
+        db.all(`SELECT * FROM special_interests WHERE sid='${arg}' ORDER BY special_interest_id ASC`, (err, rows)=>{
+            event.sender.send('specInt-reply', rows)
+        })
+    })
+})
+ipcMain.on('specInt-assign-post', (event, arg) => {
+    db.serialize(function(){
+        db.run(`INSERT INTO special_interests (special_interest, semester_id, sid) VALUES ('${arg[0]}', ${arg[1]}, '${arg[2]}')`, (err) => { 
+            if(err){ console.log(err); confirmQuery(false) } else { confirmQuery(true) }
+        })
+    })
+    function confirmQuery(queryErr) { event.sender.send('specInt-assign-confirm', queryErr) }
+})
+ipcMain.on('specInt-assign-remove-post', (event, arg) => {
+    db.serialize(function(){
+        db.run(`DELETE FROM special_interests WHERE special_interest_id=${arg}`, (err) => { 
+            if(err){ confirmQuery(false) } else { confirmQuery(true) }
+        })
+    })
+    function confirmQuery(queryErr) { event.sender.send('specInt-assign-remove-confirm', queryErr) }
+})
 
 
 // Keep a global reference of the window object, if you don't, the window will

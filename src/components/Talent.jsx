@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { TabContent, TabPane, Nav, NavItem, NavLink, Jumbotron, Container, Button, Form, FormGroup, Input, Row, Col, CustomInput, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { TabContent, TabPane, Nav, NavItem, NavLink, Jumbotron, Container, Button, Form, FormGroup, Input, Row, Col, CustomInput, Table } from 'reactstrap';
 import classnames from 'classnames';
 import './Home.css';
 
@@ -39,7 +39,7 @@ export default class Talent extends Component {
               className={classnames({ active: this.state.activeTab === '1' })}
               onClick={() => { this.toggle('1'); }}
             >
-              <h4>Manage Class Sections</h4>
+              <h4>Training Levels</h4>
 
             </NavLink>
           </NavItem>
@@ -48,7 +48,7 @@ export default class Talent extends Component {
               className={classnames({ active: this.state.activeTab === '2' })}
               onClick={() => { this.toggle('2'); }}
             >
-              <h4>Add/Edit Classes</h4>
+              <h4>Certifications</h4>
             </NavLink>
           </NavItem>
           <NavItem>
@@ -56,7 +56,23 @@ export default class Talent extends Component {
               className={classnames({ active: this.state.activeTab === '3' })}
               onClick={() => { this.toggle('3'); }}
             >
-              <h4>Add Subjects</h4>
+              <h4>Languages</h4>
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink
+              className={classnames({ active: this.state.activeTab === '4' })}
+              onClick={() => { this.toggle('4'); }}
+            >
+              <h4>Pronouns</h4>
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink
+              className={classnames({ active: this.state.activeTab === '5' })}
+              onClick={() => { this.toggle('5'); }}
+            >
+              <h4>Strengths</h4>
             </NavLink>
           </NavItem>
         </Nav>
@@ -67,435 +83,467 @@ export default class Talent extends Component {
           <TabPane tabId="1">
             <Row>
               <Col sm="12">
-                <ManageSections/>
+                <AddTrainingLevel/>
               </Col>
             </Row>
           </TabPane>
           <TabPane tabId="2">
             <Row>
               <Col>
-                <AddClass/>
+                <AddCertification/>
               </Col>
             </Row>
           </TabPane>
           <TabPane tabId="3">
             <Row>
               <Col>
-                <AddSubject/>
+                <AddLanguages/>
+              </Col>
+            </Row>
+          </TabPane>
+          <TabPane tabId="4">
+            <Row>
+              <Col>
+                <AddPronouns/>
+              </Col>
+            </Row>
+          </TabPane>
+          <TabPane tabId="5">
+            <Row>
+              <Col>
+                <Strengths/>
               </Col>
             </Row>
           </TabPane>
         </TabContent>
         <br/>
-        <h2>Classes</h2>
-
-        <h3>To do list: </h3>
-        <p>
-        1. Create classes <br/>
-        2. Edit classes?
-        ---SEMESTER SPECIFIC INFO---
-        1. Select classes <br/>
-        2. Add class sections for the semseter (Professor?) (need to store professors in DB?)<br/>
-        3. Another table stores Employees -> class sections<br/>
-        </p>
-
-
-
-        <Link to="/">
-          <Button color="primary"> Go to Home </Button>
-        </Link>
-        <br/>
-        <br/>
+        
       </Container>
     )
   }
 };
 
-class ManageSections extends Component {
+class AddTrainingLevel extends Component {
   constructor(props){
     super(props);
     this.state = {
-      semesters: [],
-      semSel: '',
-      classes: [],
-      classSel: ''
+      trainingLevels: [],
+      newTrainingLevelVal: ''
     }
   }
 
   componentDidMount() {
-    ipcRenderer.send('semesters-get', null)
-    ipcRenderer.send('classes-get', null)
-
-    ipcRenderer.once('semesters-reply', (event, arg) => {
-      if(arg.length !== 0){
-        for(let i=0; i<arg.length; i++){
-          let tempSem = {name: ''+arg[i]['semester']+' '+arg[i]['year'], semester_id: arg[i]['semester_id']}
-          this.state.semesters.push(tempSem) 
-        }
-        this.setState({semSel: arg[0]['semester_id']})
-      } else { 
-        console.log('no semesters!!!?!?!')
-      }
-    })
-
-    ipcRenderer.once('classes-reply', (event, arg) => {
-      if(arg.length !== 0){
-        for(let i=0; i<arg.length; i++){
-          let tempClass = {name: ''+arg[i]['subject']+' '+arg[i]['number'], class_id: arg[i]['class_id']}
-          this.state.classes.push(tempClass) 
-        }
-        this.setState({classSel: arg[0]['class_id']})
-      } else { 
-        console.log('no classes!!!?!?!')
-      }
+    ipcRenderer.send('training-levels-get', null)
+    ipcRenderer.on('training-levels-reply', (event, arg) => {
+      this.setState({trainingLevels: arg})
     })
   }
-
   componentWillUnmount() {
     //this.props.onRef(null)
-    ipcRenderer.removeAllListeners('class-search-reply')
+    ipcRenderer.removeAllListeners('training-levels-reply')
   }
 
-  changeSem = (event) => {
-    this.setState({semSel: event.target.value})
-  }
-
-  changeClass = (event) => {
-    this.setState({classSel: event.target.value})
-  }
-
-  // TODO REDO
-  formSubmission = (dataFromChild) => {
-    //1. Get the data it needs
-    //2. put it into an array
-    //3. Send data
-    //4. data is processed determining if it needs to update or insert into table
-    //5. responce is sent confirming data stored
-
-    let data = [this.state.semSel, dataFromChild]
-
-    ipcRenderer.send('class-manage-post', data)
-    ipcRenderer.once('class-manage-confirm', (event, arg) => {
-      //trigger an alert on the screen
-      if(arg){
-        this.setState({dbResultInfo: "Data successfully saved!"})
-      } else {
-        this.setState({dbResultInfo: "Something went wrong, your data might not have been saved!"})
-      }
-      this.setState(prevState => ({
-        modal: !prevState.modal
-      }));
+  formSubmission = () => {
+    console.log(this.state.newTrainingLevelVal)
+    ipcRenderer.send('training-level-create-post', this.state.newTrainingLevelVal)
+    ipcRenderer.once('training-level-create-confirm', (event, arg) => {
+      ipcRenderer.send('training-levels-get', null)
     })
   }
-  
   onFormSubmit = (e) => {
     e.preventDefault()
     this.formSubmission();
   }
 
-  render() {
-    let semSelOptions = this.state.semesters.map(semester => {
-      return (
-        <option value={semester['semester_id']}>{semester['name']}</option>
-      )
+  removeTrainingLevel = (training_level_id) => {
+    console.log(training_level_id)
+    ipcRenderer.send('training-level-remove-post', training_level_id)
+    ipcRenderer.once('training-level-remove-confirm', (event, arg) => {
+      ipcRenderer.send('training-levels-get', null)
     })
-    let classSelOptions = this.state.classes.map(tempClass => {
+  }
+
+  render() {
+    let trainingLevelList = this.state.trainingLevels.map(training => {
       return (
-        <option value={tempClass['class_id']}>{tempClass['name']}</option>
+        <tr>
+          <td>{training['training_level']}</td>
+          <td><Button onClick={(e) => this.removeTrainingLevel(training['training_level_id'])} size="sm" color="danger">X</Button></td>
+        </tr>
       )
     })
     return (
       <div>
-        <Row>
-          <Col md={3} sm={6}>
-            <h5>Semester: </h5>
-            <Input type="select" bsSize="sm" value={this.state.semSel} onChange={e => this.changeSem(e) }>
-              {semSelOptions}
-            </Input>
-          </Col>
-          <Col md={3} sm={6}>
-            <h5>Class: </h5>
-            <Input type="select" bsSize="sm" value={this.state.classSel} onChange={e => this.changeClass(e) }>
-              {classSelOptions}
-            </Input>
-          </Col>
-        </Row>
-        <br/>
-
         <Form onSubmit={this.onFormSubmit}>
           <Row form>
-            <Col md={10} sm={9}>
+            <Col md={11} sm={9}>
               <FormGroup>
-                <Input bsSize="lg" type="text" name="serach_input" id="search_input_id" placeholder="Search Classes..." value={this.state.search_val} onChange={e => this.setState({search_val: e.target.value})}/>
+                <Input bsSize="lg" type="text" placeholder="New Training Level..." value={this.state.newTrainingLevelVal} onChange={e => this.setState({newTrainingLevelVal: e.target.value})}/>
               </FormGroup>
             </Col>
-            <Col md={2} sm={3}>
+            <Col md={1} sm={3}>
               <FormGroup>
                 {/* textright doesnt work */}
-                <Button type="submit" className="text-center" color="primary" size="lg" block>Search</Button>
+                <Button type="submit" className="text-center" color="danger" size="lg" block>+</Button>
               </FormGroup>
             </Col>
           </Row>
         </Form>
-        <hr/>
-
+        <Row>
+          <Col md={8} sm={12}>
+            <Table borderless hover size='sm'>
+              <thead>
+                <th>Training Level</th>
+                <th></th>
+              </thead>
+              <tbody>
+                {trainingLevelList}
+              </tbody>
+            </Table>
+          </Col>
+        </Row>
       </div>
       
     )
   }
 };
 
-class AddClass extends Component {
+class AddCertification extends Component {
   constructor(props){
     super(props);
     this.state = {
-      classes: [],
-      // classSel: '',
-      subjects: [],
-      subjectSel: '',
-      classNum_val: ''
+      certifications: [],
+      newCertificationVal: ''
     }
   }
 
   componentDidMount() {
-    ipcRenderer.send('classes-get', null)
-    ipcRenderer.send('subject-get', null)
-
-    ipcRenderer.on('classes-reply', (event, arg) => {
-      if(arg.length !== 0){
-        let tempClasses = []
-        for(let i=0; i<arg.length; i++){
-          let tempClass = {name: ''+arg[i]['subject']+' '+arg[i]['number'], class_id: arg[i]['class_id']}
-          tempClasses.push(tempClass) 
-        }
-        this.setState({classes: tempClasses})
-      } else { 
-        console.log('no classes!!!?!?!')
-      }
-    })
-
-    ipcRenderer.once('subject-reply', (event, arg) => {
-      if(arg.length !== 0){
-        for(let i=0; i<arg.length; i++){
-          let tempSubject = {subject: arg[i]['subject'], subject_id: arg[i]['subject_id']}
-          this.state.subjects.push(tempSubject) 
-        }
-        this.setState({subjectSel: arg[0]['subject_id']})
-      } else { 
-        console.log('no subjects!!!?!?!')
-      }
+    ipcRenderer.send('certifications-get', null)
+    ipcRenderer.on('certifications-reply', (event, arg) => {
+      this.setState({certifications: arg})
     })
   }
   componentWillUnmount() {
     //this.props.onRef(null)
-    ipcRenderer.removeAllListeners('classes-reply')
+    ipcRenderer.removeAllListeners('certifications-reply')
   }
 
-  // TODO REDO
   formSubmission = () => {
-    //1. Get the data it needs
-    //2. put it into an array
-    //3. Send data
-    //4. data is processed determining if it needs to update or insert into table
-    //5. responce is sent confirming data stored
-
-    let data = [this.state.subjectSel, this.state.classNum_val]
-    console.log(data)
-
-    ipcRenderer.send('class-add-post', data)
-    ipcRenderer.once('class-add-confirm', (event, arg) => {
-      ipcRenderer.send('classes-get', null)
-      //trigger an alert on the screen
-      console.log(arg)
-      if(arg){
-        this.setState({dbResultInfo: "Class successfully saved!"})
-      } else {
-        this.setState({dbResultInfo: "Something went wrong, your data might not have been saved!"})
-      }
-      this.setState(prevState => ({
-        modal: !prevState.modal
-      }));
+    console.log(this.state.newCertificationVal)
+    ipcRenderer.send('certification-create-post', this.state.newCertificationVal)
+    ipcRenderer.once('certification-create-confirm', (event, arg) => {
+      ipcRenderer.send('certifications-get', null)
     })
   }
-  
   onFormSubmit = (e) => {
     e.preventDefault()
     this.formSubmission();
   }
 
-  changeSubject = (event) => {
-    this.setState({subjectSel: event.target.value})
-  }
 
-  toggleModal = () =>{
-    this.setState(prevState => ({
-      modal: !prevState.modal
-    }));
+  removeCertification = (certification_id) => {
+    console.log(certification_id)
+    ipcRenderer.send('certification-remove-post', certification_id)
+    ipcRenderer.once('certification-remove-confirm', (event, arg) => {
+      ipcRenderer.send('certifications-get', null)
+    })
   }
 
   render() {
-    let classList = this.state.classes.map(tempClass => {
+    let certificationList = this.state.certifications.map(cert => {
       return (
-        <li value={tempClass['class_id']}>{tempClass['name']}</li>
-      )
-    })
-    let subjectOptions = this.state.subjects.map(subject => {
-      return (
-        <option value={subject['subject_id']}>{subject['subject']}</option>
+        <tr>
+          <td>{cert['certification']}</td>
+          <td><Button onClick={(e) => this.removeCertification(cert['certification_id'])} size="sm" color="danger">X</Button></td>
+        </tr>
       )
     })
     return (
       <div>
         <Form onSubmit={this.onFormSubmit}>
           <Row form>
-            <Col md={4} sm={6}>
+            <Col md={11} sm={9}>
               <FormGroup>
-                <Input type="select" bsSize="lg" value={this.state.subjectSel} onChange={e => this.changeSubject(e) }>
-                  {subjectOptions}
-                </Input>
+                <Input bsSize="lg" type="text" placeholder="New Certification Level..." value={this.state.newCertificationVal} onChange={e => this.setState({newCertificationVal: e.target.value})}/>
               </FormGroup>
             </Col>
-            <Col md={5} sm={6}>
-              <FormGroup>
-                <Input bsSize="lg" type="text" name="classNum_input" id="classNum_input_id" placeholder="Class Number..." value={this.state.classNum_val} onChange={e => this.setState({classNum_val: e.target.value})}/>
-              </FormGroup>
-            </Col>
-            <Col md={3} sm={6}>
+            <Col md={1} sm={3}>
               <FormGroup>
                 {/* textright doesnt work */}
-                <Button type="submit" className="text-center" color="danger" size="lg" block>Add Class</Button>
+                <Button type="submit" className="text-center" color="danger" size="lg" block>+</Button>
               </FormGroup>
             </Col>
           </Row>
         </Form>
-        <hr/>
         <Row>
-          <Col md={12} sm={12}>
-            <h5>Class List: </h5>
-            <ul>
-              {classList}
-            </ul>
+          <Col md={8} sm={12}>
+            <Table borderless hover size='sm'>
+              <thead>
+                <th>Certifications</th>
+                <th></th>
+              </thead>
+              <tbody>
+                {certificationList}                
+              </tbody>
+            </Table>
           </Col>
         </Row>
-        <Modal isOpen={this.state.modal} toggle={this.toggleModal} className={this.props.className}>
-          {/* <ModalHeader toggle={this.toggleModal}>Modal title</ModalHeader> */}
-          <ModalBody>
-            {this.state.dbResultInfo}
-          </ModalBody>
-          <ModalFooter>
-            <Button color="primary" onClick={this.toggleModal}>Return</Button>{' '}
-          </ModalFooter>
-        </Modal>
       </div>
       
     )
   }
 };
 
-class AddSubject extends Component {
+class AddLanguages extends Component {
   constructor(props){
     super(props);
     this.state = {
-      subjects: [],
-      newSubjectVal: ''
+      languages: [],
+      newLanguageVal: ''
     }
   }
 
   componentDidMount() {
-    ipcRenderer.send('subject-get', null)
-
-    ipcRenderer.on('subject-reply', (event, arg) => {
-      if(arg.length !== 0){
-        let tempSubjects = []
-        for(let i=0; i<arg.length; i++){
-          let tempSubject = {subject: arg[i]['subject'], subject_id: arg[i]['subject_id']}
-          tempSubjects.push(tempSubject) 
-        }
-        this.setState({subjects: tempSubjects})
-        // this.setState({subjectSel: arg[0]['subject_id']})
-      } else { 
-        console.log('no subjects!!!?!?!')
-      }
+    ipcRenderer.send('languages-get', null)
+    ipcRenderer.on('languages-reply', (event, arg) => {
+      this.setState({languages: arg})
     })
   }
   componentWillUnmount() {
     //this.props.onRef(null)
-    ipcRenderer.removeAllListeners('subject-reply')
+    ipcRenderer.removeAllListeners('languages-reply')
   }
 
-  // TODO REDO
   formSubmission = () => {
-    // let data = [this.state.semSel, dataFromChild]
-    console.log(this.state.newSubjectVal)
-
-    ipcRenderer.send('subject-create-post', this.state.newSubjectVal)
-    ipcRenderer.once('subject-create-confirm', (event, arg) => {
-      ipcRenderer.send('subject-get', null)
-      //trigger an alert on the screen
-      // console.log(arg)
-      if(arg){
-        this.setState({dbResultInfo: "Subject created successfully!"})
-      } else {
-        this.setState({dbResultInfo: "Something went wrong, your data might not have been saved!"})
-      }
-      this.setState(prevState => ({
-        modal: !prevState.modal
-      }));
+    console.log(this.state.newLanguageVal)
+    ipcRenderer.send('language-create-post', this.state.newLanguageVal)
+    ipcRenderer.once('language-create-confirm', (event, arg) => {
+      ipcRenderer.send('languages-get', null)
     })
   }
-  
   onFormSubmit = (e) => {
     e.preventDefault()
     this.formSubmission();
   }
 
-  toggleModal = () =>{
-    this.setState(prevState => ({
-      modal: !prevState.modal
-    }));
+
+  removeLanguage = (language_id) => {
+    console.log(language_id)
+    ipcRenderer.send('language-remove-post', language_id)
+    ipcRenderer.once('language-remove-confirm', (event, arg) => {
+      ipcRenderer.send('languages-get', null)
+    })
   }
 
   render() {
-    let subjectList = this.state.subjects.map(subject => {
+    let languageList = this.state.languages.map(language => {
       return (
-        <li value={subject['subject_id']}>{subject['subject']}</li>
+        <tr>
+          <td>{language['language']}</td>
+          <td><Button onClick={(e) => this.removeLanguage(language['language_id'])} size="sm" color="danger">X</Button></td>
+        </tr>
       )
     })
     return (
       <div>
         <Form onSubmit={this.onFormSubmit}>
           <Row form>
-            <Col md={8} sm={6}>
+            <Col md={11} sm={9}>
               <FormGroup>
-                <Input bsSize="lg" type="text" name="subject_input" id="subject_input_id" placeholder="New Subject..." value={this.state.newSubjectVal} onChange={e => this.setState({newSubjectVal: e.target.value})}/>
+                <Input bsSize="lg" type="text" placeholder="New Language..." value={this.state.newLanguageVal} onChange={e => this.setState({newLanguageVal: e.target.value})}/>
               </FormGroup>
             </Col>
-            <Col md={4} sm={6}>
+            <Col md={1} sm={3}>
               <FormGroup>
                 {/* textright doesnt work */}
-                <Button type="submit" className="text-center" color="danger" size="lg" block>Add Subject</Button>
+                <Button type="submit" className="text-center" color="danger" size="lg" block>+</Button>
               </FormGroup>
             </Col>
           </Row>
         </Form>
-        <hr/>
         <Row>
-          <Col md={12} sm={12}>
-            <h5>Subject List: </h5>
-            <ul>
-              {subjectList}
-            </ul>
+          <Col md={8} sm={12}>
+            <Table borderless hover size='sm'>
+              <thead>
+                <th>Languages</th>
+                <th></th>
+              </thead>
+              <tbody>
+                {languageList}
+              </tbody>
+            </Table>
           </Col>
         </Row>
-        <Modal isOpen={this.state.modal} toggle={this.toggleModal} className={this.props.className}>
-          {/* <ModalHeader toggle={this.toggleModal}>Modal title</ModalHeader> */}
-          <ModalBody>
-            {this.state.dbResultInfo}
-          </ModalBody>
-          <ModalFooter>
-            <Button color="primary" onClick={this.toggleModal}>Return</Button>{' '}
-          </ModalFooter>
-        </Modal>
+      </div>
+      
+    )
+  }
+};
+
+class AddPronouns extends Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      pronouns: [],
+      newPronounVal: ''
+    }
+  }
+
+  componentDidMount() {
+    ipcRenderer.send('pronouns-get', null)
+    ipcRenderer.on('pronouns-reply', (event, arg) => {
+      this.setState({pronouns: arg})
+    })
+  }
+  componentWillUnmount() {
+    //this.props.onRef(null)
+    ipcRenderer.removeAllListeners('pronouns-reply')
+  }
+
+  formSubmission = () => {
+    console.log(this.state.newPronounVal)
+    ipcRenderer.send('pronoun-create-post', this.state.newPronounVal)
+    ipcRenderer.once('pronoun-create-confirm', (event, arg) => {
+      ipcRenderer.send('pronouns-get', null)
+    })
+  }
+  onFormSubmit = (e) => {
+    e.preventDefault()
+    this.formSubmission();
+  }
+
+
+  removePronoun = (pronoun_id) => {
+    console.log(pronoun_id)
+    ipcRenderer.send('pronoun-remove-post', pronoun_id)
+    ipcRenderer.once('pronoun-remove-confirm', (event, arg) => {
+      ipcRenderer.send('pronouns-get', null)
+    })
+  }
+
+  render() {
+    let pronounList = this.state.pronouns.map(pronoun => {
+      return (
+        <tr>
+          <td>{pronoun['pronoun']}</td>
+          <td><Button onClick={(e) => this.removePronoun(pronoun['pronoun_id'])} size="sm" color="danger">X</Button></td>
+        </tr>
+      )
+    })
+    return (
+      <div>
+        <Form onSubmit={this.onFormSubmit}>
+          <Row form>
+            <Col md={11} sm={9}>
+              <FormGroup>
+                <Input bsSize="lg" type="text" placeholder="New Pronoun..." value={this.state.newPronounVal} onChange={e => this.setState({newPronounVal: e.target.value})}/>
+              </FormGroup>
+            </Col>
+            <Col md={1} sm={3}>
+              <FormGroup>
+                {/* textright doesnt work */}
+                <Button type="submit" className="text-center" color="danger" size="lg" block>+</Button>
+              </FormGroup>
+            </Col>
+          </Row>
+        </Form>
+        <Row>
+          <Col md={8} sm={12}>
+            <Table borderless hover size='sm'>
+              <thead>
+                <th>Pronouns</th>
+                <th></th>
+              </thead>
+              <tbody>
+                {pronounList}
+              </tbody>
+            </Table>
+          </Col>
+        </Row>
+      </div>
+      
+    )
+  }
+};
+
+class Strengths extends Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      strengths: [],
+      // newStrengthVal: ''
+    }
+  }
+
+  componentDidMount() {
+    ipcRenderer.send('strengths-get', null)
+    ipcRenderer.once('strengths-reply', (event, arg) => {
+      this.setState({strengths: arg})
+    })
+  }
+  componentWillUnmount() {
+    //this.props.onRef(null)
+    // ipcRenderer.removeAllListeners('strengths-reply')
+  }
+
+  formSubmission = () => {
+    // console.log(this.state.newstrengthVal)
+    // ipcRenderer.send('strength-create-post', this.state.newstrengthVal)
+    // ipcRenderer.once('strength-create-confirm', (event, arg) => {
+    //   ipcRenderer.send('strengths-get', null)
+    // })
+  }
+  onFormSubmit = (e) => {
+    e.preventDefault()
+    this.formSubmission();
+  }
+
+
+  // removeStrength = (strength_id) => {
+  //   console.log(strength_id)
+  //   ipcRenderer.send('strength-remove-post', strength_id)
+  //   ipcRenderer.once('strength-remove-confirm', (event, arg) => {
+  //     ipcRenderer.send('strengths-get', null)
+  //   })
+  // }
+
+  render() {
+    let strengthList = this.state.strengths.map(strength => {
+      return (
+        <tr>
+          <td>{strength['strength']}</td>
+          {/* <td><Button onClick={(e) => this.removeStrength(strength['strength_id'])} size="sm" color="danger">X</Button></td> */}
+        </tr>
+      )
+    })
+    return (
+      <div>
+        {/* <Form onSubmit={this.onFormSubmit}>
+          <Row form>
+            <Col md={11} sm={9}>
+              <FormGroup>
+                <Input bsSize="lg" type="text" placeholder="New strength..." value={this.state.newStrengthVal} onChange={e => this.setState({newStrengthVal: e.target.value})}/>
+              </FormGroup>
+            </Col>
+            <Col md={1} sm={3}>
+              <FormGroup>
+                <Button type="submit" className="text-center" color="danger" size="lg" block>+</Button>
+              </FormGroup>
+            </Col>
+          </Row>
+        </Form> */}
+        <Row>
+          <Col md={8} sm={12}>
+            <Table borderless hover size='sm'>
+              <thead>
+                <th>Strengths</th>
+              </thead>
+              <tbody>
+                {strengthList}
+              </tbody>
+            </Table>
+          </Col>
+        </Row>
       </div>
       
     )

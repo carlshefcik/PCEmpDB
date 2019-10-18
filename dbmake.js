@@ -40,6 +40,62 @@ db.serialize(function(){
             semester_id INTEGER,
             grade       REAL)`)
 
+        db.run(`
+        CREATE TABLE IF NOT EXISTS training_levels (
+            training_level_id   INTEGER PRIMARY KEY AUTOINCREMENT,
+            training_level      TEXT)`)
+        db.run(`
+        CREATE TABLE IF NOT EXISTS assigned_training_level (
+            training_id         INTEGER PRIMARY KEY AUTOINCREMENT,
+            training_level_id   INTEGER,
+            semester_id         INTEGER,
+            sid                 TEXT)`)
+
+        db.run(`
+        CREATE TABLE IF NOT EXISTS certifications (
+            certification_id    INTEGER PRIMARY KEY AUTOINCREMENT,
+            certification       TEXT)`)
+        db.run(`
+        CREATE TABLE IF NOT EXISTS assigned_certifications (
+            assigned_cert_id    INTEGER PRIMARY KEY AUTOINCREMENT,
+            certification_id    INTEGER,
+            semester_id         INTEGER,
+            sid                 TEXT)`)
+
+        db.run(`
+        CREATE TABLE IF NOT EXISTS strengths (
+            strength_id    INTEGER PRIMARY KEY AUTOINCREMENT,
+            strength       TEXT)`)
+        db.run(`
+        CREATE TABLE IF NOT EXISTS assigned_strengths (
+            assigned_strength_id    INTEGER PRIMARY KEY AUTOINCREMENT,
+            strength_id             INTEGER,
+            semester_id             INTEGER,
+            sid                     TEXT)`)
+
+        db.run(`
+        CREATE TABLE IF NOT EXISTS languages (
+            language_id    INTEGER PRIMARY KEY AUTOINCREMENT,
+            language       TEXT)`)
+        db.run(`
+        CREATE TABLE IF NOT EXISTS assigned_languages (
+            assigned_language_id    INTEGER PRIMARY KEY AUTOINCREMENT,
+            language_id             INTEGER,
+            semester_id             INTEGER,
+            sid                     TEXT)`)
+
+        db.run(`
+        CREATE TABLE IF NOT EXISTS special_interests (
+            special_interest_id     INTEGER PRIMARY KEY AUTOINCREMENT,
+            special_interest        TEXT,
+            semester_id             INTEGER,
+            sid                     TEXT)`)
+
+        db.run(`
+        CREATE TABLE IF NOT EXISTS pronouns (
+            pronoun_id    INTEGER PRIMARY KEY AUTOINCREMENT,
+            pronoun       TEXT)`)
+
 
         //employees table just holds all the info for every employee that has been at peer connections. (maybe also some info from)
         db.run(`CREATE TABLE IF NOT EXISTS employee_data (
@@ -49,35 +105,30 @@ db.serialize(function(){
             ,last_name          TEXT
             ,first_name         TEXT
             ,preferred_name     TEXT
-            ,pronouns           INTEGER
+            ,pronoun_id         INTEGER
             ,email              TEXT
             ,phone_number       TEXT
             ,shirt_size         INTEGER
             ,grad_date          TEXT
             ,major              TEXT
             ,college            TEXT
-            ,undergrad          INTEGER
+            ,degree             INTEGER
+            ,transfer           INTEGER
             ,international      INTEGER 
             ,role               INTEGER
-            ,semester_start     TEXT
+            ,semester_start     INTEGER
             ,hire_status        TEXT
             ,schedule_sent      INTEGER
             ,evc_date           TEXT
             ,pay_rate           REAL
             ,leave_date         TEXT 
             ,leave_reason       TEXT
-            ,training_levels    TEXT
-            ,certifications     TEXT
             ,avg_hours_wk       REAL
-            ,courses            TEXT
-            ,languages          TEXT
-            ,strengths          TEXT
-            ,special_interests  TEXT
             )`)
 
         //this is a semester specific table that holds info on the semetser, points to other tables but only semester_overview table points to it
         //phone number?
-        //pronouns: 0=other, 1= male, 2=female
+        //pronoun_id: 0=other, 1= male, 2=female
         //shirt size: 0 1 2 3 4 5 6 7 8 
         //undergrad: 0 1
         //international: 0 1
@@ -91,9 +142,22 @@ db.serialize(function(){
     // subjectFill()
     // classFill()
     // gradesFill()
+    // strengthsFill()
+    // pronounsFill()
+    // languagesFill()
+    // certificationsFill()
+    // training_levelsFill()
     // employeeFill()
     
+    // TODO add as many semesters as deanna wants(?)
     function semesterFill(){
+        db.run(`INSERT INTO semester_list (semester, year) VALUES ('Spring', 2015)`)
+        db.run(`INSERT INTO semester_list (semester, year) VALUES ('Fall', 2015)`)
+        db.run(`INSERT INTO semester_list (semester, year) VALUES ('Spring', 2016)`)
+        db.run(`INSERT INTO semester_list (semester, year) VALUES ('Fall', 2016)`)
+        db.run(`INSERT INTO semester_list (semester, year) VALUES ('Spring', 2017)`)
+        db.run(`INSERT INTO semester_list (semester, year) VALUES ('Fall', 2017)`)
+        db.run(`INSERT INTO semester_list (semester, year) VALUES ('Spring', 2018)`)
         db.run(`INSERT INTO semester_list (semester, year) VALUES ('Fall', 2018)`)
         db.run(`INSERT INTO semester_list (semester, year) VALUES ('Spring', 2019)`)
         db.run(`INSERT INTO semester_list (semester, year) VALUES ('Fall', 2019)`)
@@ -111,11 +175,68 @@ db.serialize(function(){
     }
 
     function gradesFill(){
-        db.run(`INSERT INTO class_grades (sid, class_id, semester_id, grade) VALUES ('111111111', 1, 2, 3.0)`)
-        db.run(`INSERT INTO class_grades (sid, class_id, semester_id, grade) VALUES ('123456789', 1, 1, 4.0)`)
-        db.run(`INSERT INTO class_grades (sid, class_id, semester_id, grade) VALUES ('010517091', 1, 1, 4.0)`)
-        db.run(`INSERT INTO class_grades (sid, class_id, semester_id, grade) VALUES ('010517091', 2, 1, 3.0)`)
-        db.run(`INSERT INTO class_grades (sid, class_id, semester_id, grade) VALUES ('010517091', 3, 2, 4.0)`)
+        db.run(`INSERT INTO class_grades (sid, class_id, semester_id, grade) VALUES ('111111111', 1, 9, 3.0)`)
+        db.run(`INSERT INTO class_grades (sid, class_id, semester_id, grade) VALUES ('123456789', 1, 8, 4.0)`)
+        db.run(`INSERT INTO class_grades (sid, class_id, semester_id, grade) VALUES ('010517091', 1, 8, 4.0)`)
+        db.run(`INSERT INTO class_grades (sid, class_id, semester_id, grade) VALUES ('010517091', 2, 8, 3.0)`)
+        db.run(`INSERT INTO class_grades (sid, class_id, semester_id, grade) VALUES ('010517091', 3, 9, 4.0)`)
+    }
+
+    function strengthsFill(){
+        //TODO fill in all 34 strengths
+        db.run(`INSERT INTO strengths (strength) VALUES ('Acheiver')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Adaptable')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Analytical')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Arranger')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Belif')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Command')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Communication')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Competition')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Connectedness')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Consistency')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Context')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Deliberative')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Developer')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Discipline')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Empathy')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Focus')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Futuristic')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Harmony')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Ideation')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Includer')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Individualization')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Input')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Intellection')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Learner')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Maximizer')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Positivity')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Relator')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Resposiblity')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Restorative')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Self-assurance')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Significance')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Strategic')`)
+        db.run(`INSERT INTO strengths (strength) VALUES ('Woo')`)
+    }
+
+    function pronounsFill(){
+        db.run(`INSERT INTO pronouns (pronoun) VALUES ('He/Him')`)
+        db.run(`INSERT INTO pronouns (pronoun) VALUES ('She/Her')`)
+    }
+    function certificationsFill(){
+        db.run(`INSERT INTO certifications (certification) VALUES ('CPR')`)
+        db.run(`INSERT INTO certifications (certification) VALUES ('First Aid')`)
+    }
+    function training_levelsFill(){
+        db.run(`INSERT INTO training_levels (training_level) VALUES ('CRLA Tutor 1')`)
+        db.run(`INSERT INTO training_levels (training_level) VALUES ('CRLA Tutor 2')`)
+        db.run(`INSERT INTO training_levels (training_level) VALUES ('CRLA Mentor 1')`)
+        db.run(`INSERT INTO training_levels (training_level) VALUES ('CRLA Mentor 2')`)
+    }
+    function languagesFill(){
+        db.run(`INSERT INTO languages (language) VALUES ('English')`)
+        db.run(`INSERT INTO languages (language) VALUES ('Spanish')`)
+        db.run(`INSERT INTO languages (language) VALUES ('Chinese')`)
     }
     
     function employeeFill(){
@@ -126,14 +247,15 @@ db.serialize(function(){
             ,last_name
             ,first_name
             ,preferred_name
-            ,pronouns
+            ,pronoun_id
             ,email
             ,phone_number
             ,shirt_size
             ,grad_date
             ,major
             ,college
-            ,undergrad
+            ,degree
+            ,transfer
             ,international
             ,role
             ,semester_start
@@ -143,36 +265,30 @@ db.serialize(function(){
             ,pay_rate
             ,leave_date
             ,leave_reason
-            ,training_levels
-            ,certifications
             ,avg_hours_wk
-            ,courses
-            ,languages
-            ,strengths
-            ,special_interests
         ) 
         VALUES 
-        (1, "010517091", "Shefcik", "Carl", "Carl", 1, "carl.shefcik@sjsu.edu", "619-846-3775", 2, "Spring 2020", "Software Engineering", "Engineering", 1, 0, 3, "Fall 2017", "Good?", "1", "date format", "15.00", "", "", "SI level 2", "", "15", "array pointing to class ids", "English", "strengths", "memes")`)
+        (8, "010517091", "Shefcik", "Carl", "Carl", 1, "carl.shefcik@sjsu.edu", "619-846-3775", 2, "Spring 2020", "Software Engineering", "Engineering", 1, 0, 0, 3, 5, "Good?", "1", "date format", "15.00", "", "", "15")`)
 
         db.run(`INSERT INTO employee_data 
-        (semester_id, sid, last_name, first_name, preferred_name, pronouns, email, phone_number, shirt_size, grad_date, major, college, undergrad, international, role, semester_start, hire_status, schedule_sent, evc_date, pay_rate, leave_date, leave_reason, training_levels, certifications, avg_hours_wk, courses, languages, strengths, special_interests) 
+        (semester_id, sid, last_name, first_name, preferred_name, pronoun_id, email, phone_number, shirt_size, grad_date, major, college, degree, transfer, international, role, semester_start, hire_status, schedule_sent, evc_date, pay_rate, leave_date, leave_reason, avg_hours_wk) 
         VALUES 
-        (2, "010517091", "Shefcik", "Carl", "Carl", 1, "carl.shefcik@sjsu.edu", "619-846-3775", 2, "Spring 2020", "Software Engineering", "Engineering", 1, 0, 2, "Fall 2017", "Good?", "1", "date format", "15.75", "", "", "SI level 2", "", "4", "array pointing to class ids", "English", "strengths", "memes")`)
+        (9, "010517091", "Shefcik", "Carl", "Carl", 1, "carl.shefcik@sjsu.edu", "619-846-3775", 2, "Spring 2020", "Software Engineering", "Engineering", 1, 0, 0, 2, 5, "Good?", "1", "date format", "15.75", "", "", "4")`)
 
         db.run(`INSERT INTO employee_data 
-        (semester_id, sid, last_name, first_name, preferred_name, pronouns, email, phone_number, shirt_size, grad_date, major, college, undergrad, international, role, semester_start, hire_status, schedule_sent, evc_date, pay_rate, leave_date, leave_reason, training_levels, certifications, avg_hours_wk, courses, languages, strengths, special_interests) 
+        (semester_id, sid, last_name, first_name, preferred_name, pronoun_id, email, phone_number, shirt_size, grad_date, major, college, degree, transfer, international, role, semester_start, hire_status, schedule_sent, evc_date, pay_rate, leave_date, leave_reason, avg_hours_wk) 
         VALUES 
-        (3, "010517091", "Shefcik", "Carl", "Carl", 1, "carl.shefcik@sjsu.edu", "619-846-3775", 2, "Spring 2020", "Software Engineering", "Engineering", 1, 0, 2, "Fall 2017", "Good?", "1", "date format", "15.75", "", "", "SI level 2", "", "4", "array pointing to class ids", "English", "strengths", "memes")`)
+        (10, "010517091", "Shefcik", "Carl", "Carl", 1, "carl.shefcik@sjsu.edu", "619-846-3775", 2, "Spring 2020", "Software Engineering", "Engineering", 1, 0, 0, 2, 5, "Good?", "1", "date format", "15.75", "", "", "4")`)
         
         db.run(`INSERT INTO employee_data 
-        (semester_id, sid, last_name, first_name, preferred_name, pronouns, email, phone_number, shirt_size, grad_date, major, college, undergrad, international, role, semester_start, hire_status, schedule_sent, evc_date, pay_rate, leave_date, leave_reason, training_levels, certifications, avg_hours_wk, courses, languages, strengths, special_interests) 
+        (semester_id, sid, last_name, first_name, preferred_name, pronoun_id, email, phone_number, shirt_size, grad_date, major, college, degree, transfer, international, role, semester_start, hire_status, schedule_sent, evc_date, pay_rate, leave_date, leave_reason, avg_hours_wk) 
         VALUES 
-        (1, "123456789", "Naeem", "Sonnan", "", 1, "", "", 2, "Spring 2020", "Computer Science", "COS", 1, 0, 2, "Fall 2017", "Good?", "1", "date format", "15.75", "", "", "Tutor level 2", "", "4", "array pointing to class ids", "English", "strengths", "memes")`)
+        (9, "123456789", "Naeem", "Sonnan", "", 1, "", "", 2, "Spring 2020", "Computer Science", "COS", 1, 0, 0, 2, 4, "Good?", "1", "date format", "15.75", "", "", "4")`)
        
         db.run(`INSERT INTO employee_data 
-        (semester_id, sid, last_name, first_name, preferred_name, pronouns, email, phone_number, shirt_size, grad_date, major, college, undergrad, international, role, semester_start, hire_status, schedule_sent, evc_date, pay_rate, leave_date, leave_reason, training_levels, certifications, avg_hours_wk, courses, languages, strengths, special_interests) 
+        (semester_id, sid, last_name, first_name, preferred_name, pronoun_id, email, phone_number, shirt_size, grad_date, major, college, degree, transfer, international, role, semester_start, hire_status, schedule_sent, evc_date, pay_rate, leave_date, leave_reason, avg_hours_wk) 
         VALUES 
-        (1, "111111111", "Doe", "Jon", "", 1, "", "", 2, "Spring 2020", "Computer Science", "COS", 1, 0, 2, "Fall 2017", "Good?", "1", "date format", "15.75", "", "", "Tutor level 2", "", "4", "array pointing to class ids", "English", "strengths", "memes")`)
+        (9, "111111111", "Doe", "Jon", "", 1, "", "", 2, "Spring 2020", "Computer Science", "COS", 1, 0, 0, 2, 7, "Good?", "1", "date format", "15.75", "", "", "4")`)
         
     }
 
@@ -182,9 +298,12 @@ db.serialize(function(){
     // delete command
     // db.run('DELETE FROM Employees')
 
-    // db.all(`SELECT * FROM semester_list`, (err, rows)=>{
-    //     console.log(rows)
-    // })
+    db.all(`SELECT * FROM pronouns`, (err, rows)=>{
+        console.log(rows)
+    })
+    db.all(`SELECT * FROM semester_list`, (err, rows)=>{
+        console.log(rows)
+    })
     // db.all(`SELECT * FROM employee_data`, (err, rows)=>{
     //     console.log(rows)
     //     // if(rows){ console.log('worked') }
@@ -255,29 +374,29 @@ db.serialize(function(){
     //     })
     // })
 
-    db.serialize(function(){
-        db.all(`
-        SELECT
-            cl.class_id, sl.subject, cl.number, cg.grade, e.first_name, e.last_name, e.sid, e.role
-        FROM
-            class_list as cl
-        JOIN
-            subject_list as sl ON cl.subject_id = sl.subject_id
-        JOIN
-            class_grades as cg ON cl.class_id = cg.class_id
-        JOIN
-            employee_data as e ON cg.sid = e.sid
-        WHERE
-            cl.class_id = 1
-            AND e.semester_id = 3
-        GROUP BY
-            e.sid, cl.class_id`
-        , (err, rows)=>{ 
-            console.log('-----------------------------------------------------')
-            console.log(err)
-            console.log(rows)
-        })
-    })
+    // db.serialize(function(){
+    //     db.all(`
+    //     SELECT
+    //         cl.class_id, sl.subject, cl.number, cg.grade, e.first_name, e.last_name, e.sid, e.role
+    //     FROM
+    //         class_list as cl
+    //     JOIN
+    //         subject_list as sl ON cl.subject_id = sl.subject_id
+    //     JOIN
+    //         class_grades as cg ON cl.class_id = cg.class_id
+    //     JOIN
+    //         employee_data as e ON cg.sid = e.sid
+    //     WHERE
+    //         cl.class_id = 1
+    //         AND e.semester_id = 3
+    //     GROUP BY
+    //         e.sid, cl.class_id`
+    //     , (err, rows)=>{ 
+    //         console.log('-----------------------------------------------------')
+    //         console.log(err)
+    //         console.log(rows)
+    //     })
+    // })
     
     // db.serialize(function(){
     //     db.all(`
@@ -305,6 +424,15 @@ db.serialize(function(){
     //         console.log(rows)
     //     })
     // })
+    
+
+    db.serialize(function(){
+        db.all(`SELECT * FROM assigned_strengths JOIN strengths ON strengths.strength_id=assigned_strengths.strength_id WHERE sid='010517091' ORDER BY assigned_strength_id ASC`, (err, rows)=>{ 
+            console.log('-----------------------------------------------------')
+            console.log(err)
+            console.log(rows)
+        })
+    })
     
     
 

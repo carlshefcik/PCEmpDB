@@ -76,7 +76,7 @@ export default class Home extends Component {
                 <Card>
                   <CardBody>
                     <img top width="100%"  src={newsempic} alt="Card newsem"/>
-                    <CardText>Create a new semester in the database</CardText>
+                    <CardText>Transfer data from semesters or create new semester</CardText>
                   </CardBody>
                 </Card>
               </Link>

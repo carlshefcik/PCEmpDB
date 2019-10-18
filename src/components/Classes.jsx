@@ -118,7 +118,8 @@ class ManageSections extends Component {
       semesters: [],
       semSel: '',
       classes: [],
-      classSel: ''
+      classSel: '',
+      newSectionVal: ''
     }
   }
 
@@ -159,6 +160,7 @@ class ManageSections extends Component {
   }
 
   changeSem = (event) => {
+    //TODO this should change the table of class sections being displayed below
     this.setState({semSel: event.target.value})
   }
 
@@ -166,15 +168,15 @@ class ManageSections extends Component {
     this.setState({classSel: event.target.value})
   }
 
-  // TODO REDO
-  formSubmission = (dataFromChild) => {
+  formSubmission = () => {
     //1. Get the data it needs
     //2. put it into an array
     //3. Send data
     //4. data is processed determining if it needs to update or insert into table
     //5. responce is sent confirming data stored
 
-    let data = [this.state.semSel, dataFromChild]
+    let data = [this.state.semSel, this.state.classSel, this.state.newSectionVal]
+    console.log(data)
 
     ipcRenderer.send('class-manage-post', data)
     ipcRenderer.once('class-manage-confirm', (event, arg) => {
@@ -221,24 +223,28 @@ class ManageSections extends Component {
               {classSelOptions}
             </Input>
           </Col>
+          <Col md={6} sm={12}>
+            <h5>Section Number: </h5>
+            <Form onSubmit={this.onFormSubmit}>
+              <Row form>
+                <Col md={9} sm={10}>
+                  <FormGroup>
+                    <Input bsSize="sm" type="text" placeholder="Section Number..." value={this.state.newSectionVal} onChange={e => this.setState({newSectionVal: e.target.value})}/>
+                  </FormGroup>
+                </Col>
+                <Col md={3} sm={2}>
+                  <FormGroup>
+                    {/* textright doesnt work */}
+                    <Button type="submit" className="text-center" color="primary" size="sm" block>+</Button>
+                  </FormGroup>
+                </Col>
+              </Row>
+            </Form>
+          </Col>
         </Row>
         <br/>
 
-        <Form onSubmit={this.onFormSubmit}>
-          <Row form>
-            <Col md={10} sm={9}>
-              <FormGroup>
-                <Input bsSize="lg" type="text" name="serach_input" id="search_input_id" placeholder="Search Classes..." value={this.state.search_val} onChange={e => this.setState({search_val: e.target.value})}/>
-              </FormGroup>
-            </Col>
-            <Col md={2} sm={3}>
-              <FormGroup>
-                {/* textright doesnt work */}
-                <Button type="submit" className="text-center" color="primary" size="lg" block>Search</Button>
-              </FormGroup>
-            </Col>
-          </Row>
-        </Form>
+        
         <hr/>
 
       </div>

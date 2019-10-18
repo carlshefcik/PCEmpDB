@@ -50,7 +50,6 @@ export default class NewSemester extends Component {
         console.log('no semesters!!!?!?!')
       }
 
-      // TODO load in the employee list from the semester
 
       ipcRenderer.send('semEmployees-get', arg[0]['semester_id']); //arg[0] is the prevSemSel
       ipcRenderer.on('semEmployees-reply', (event, arg) => {
@@ -105,7 +104,6 @@ export default class NewSemester extends Component {
   }
 
   nextSemEmployeeAdd = (dataFromChild) => {
-    // TODO update the data correctly
     let data = [this.state.nextTermSel, this.state.nextYearSel, dataFromChild]
     ipcRenderer.send('nextSem-post', data)
     ipcRenderer.once('nextSem-confirm', (event, arg) => {

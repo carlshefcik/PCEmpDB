@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 // eslint-disable-next-line
 import { Link } from 'react-router-dom';
-import { TabContent, TabPane, Nav, NavItem, NavLink, Jumbotron, Container, Button, Form, FormGroup, Input, Row, Col, CustomInput } from 'reactstrap';
+import { TabContent, TabPane, Nav, NavItem, NavLink, Jumbotron, Container, Button, Form, FormGroup, Input, Table, Row, Col, CustomInput } from 'reactstrap';
 import classnames from 'classnames';
 
 // eslint-disable-next-line
@@ -111,7 +111,7 @@ class DataTable extends Component {
   }
 
   componentDidMount() {
-    //TODO Load all the current employees to the list on page open
+    // Loads all the current employees to the list on page open
     this.searchDB()
 
     // takes reply and adds it to the data
@@ -149,7 +149,7 @@ class DataTable extends Component {
     searchParams.push(this.state.search_tutor)
     searchParams.push(this.state.search_mentor)
     searchParams.push(this.state.search_si)
-    // TODO redo this employed part 
+    // TODO redo this employed part
     searchParams.push(this.state.search_employed)
     searchParams.push(this.state.search_option)
     //look in the db, the reply will be pased by the icpRenderer
@@ -167,11 +167,9 @@ class DataTable extends Component {
   
 
   render() {
-
     //this creates the info inside the datatable
     let items = this.state.data.map(rowData => {
       let role = ''
-      // TODO remove this part and make it in the database
       if(rowData['role'] === -1) {role = 'N/A'} else if(rowData['role'] === 0) {role = 'Tutor'} else if (rowData['role'] === 1) { role = 'Mentor'} else if (rowData['role'] === 2) { role = 'SI'} else if (rowData['role'] === 3) { role = 'WDS'}
       return (
         <tr>
@@ -292,11 +290,9 @@ class DataTable2 extends Component {
       }
     })
 
-    //TODO Load all the current employees to the list on page open
     // this.searchDB()
 
     // takes reply and adds it to the data
-    // TODO create
     ipcRenderer.on('class-search-reply', (event, arg) => {
       console.log(arg)
       //removes old reference of datatable
@@ -407,7 +403,6 @@ class DataTable2 extends Component {
 
     //this creates the info inside the datatable
     let items = this.state.data.map(rowData => {
-      // TODO should the button link to something else?
       // TODO remove this role part and make it in the database?
       let role = ''
       if(rowData['role'] === -1) {role = 'N/A'} else if(rowData['role'] === 0) {role = 'Tutor'} else if (rowData['role'] === 1) { role = 'Mentor'} else if (rowData['role'] === 2) { role = 'SI'} else if (rowData['role'] === 3) { role = 'WDS'}

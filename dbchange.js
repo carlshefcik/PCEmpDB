@@ -1,5 +1,6 @@
 /**
  * Creates the db is not made and creates tables and relationships if not created already
+ * DEPRECIATED
  */
 const sqlite3 = require('sqlite3').verbose()
 const db = new sqlite3.Database("Employee.db")
@@ -7,7 +8,7 @@ const db = new sqlite3.Database("Employee.db")
 //will have to make 4 tabes every semester, probably store the table names in the semester_overview so we dont have to build them.
 
 db.serialize(function(){
-    db.run('UPDATE employees_fall_2018 SET last_name=$last_name, first_name=$first_name, preferred_name=$preferred_name, pronouns=$pronouns, email=$email, phone_number=$phone_number, shirt_size=$shirt_size, grad_date=$grad_date, major=$major, college=$college, undergrad=$undergrad, international=$international, role=$role, semester_start=$semester_start, hire_status=$hire_status, schedule_sent=$schedule_sent, evc_date=$evc_date, pay_rate=$pay_rate, leave_date=$leave_date, leave_reason=$leave_reason, training_levels=$training_levels, certifications=$certifications, avg_hours_wk=$avg_hours_wk, courses=$courses, languages=$languages, strengths=$strengths, special_interests=$special_interests WHERE sid=$sid', {
+    db.run('UPDATE employees_fall_2018 SET last_name=$last_name, first_name=$first_name, preferred_name=$preferred_name, pronoun_id=$pronouns, email=$email, phone_number=$phone_number, shirt_size=$shirt_size, grad_date=$grad_date, major=$major, college=$college, undergrad=$undergrad, international=$international, role=$role, semester_start=$semester_start, hire_status=$hire_status, schedule_sent=$schedule_sent, evc_date=$evc_date, pay_rate=$pay_rate, leave_date=$leave_date, leave_reason=$leave_reason, training_levels=$training_levels, certifications=$certifications, avg_hours_wk=$avg_hours_wk, courses=$courses, languages=$languages, strengths=$strengths, special_interests=$special_interests WHERE sid=$sid', {
         $last_name: "Shefcik", 
         $first_name: "Carl", 
         $preferred_name: "Carl", 

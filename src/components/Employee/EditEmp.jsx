@@ -174,11 +174,7 @@ export default class EditEmp extends Component {
                     </Row>
                     <hr/>
                     <EmployeeForm ref="emp_form" disabled={true} onRef={ref => (this.emp_form = ref)} formSubmit={this.formSubmission.bind(this)}/>
-                    <br/><br/>
-                    <h3>To do list: </h3>
-                    <p>
-                      1. Create and load more verbose datatypes into the parameters
-                    </p>
+                    <br/>
                   </Jumbotron>
                 </Container>
                 <Modal isOpen={this.state.modal} toggle={this.toggleModal} className={this.props.className}>
@@ -305,7 +301,8 @@ class AddClass extends Component {
         }
         this.setState({gradesList: tempGradesList})
       } else {
-        console.log('no classes!!!?!?!')
+        console.log('no grades!!!?!?!')
+        this.setState({gradesList: []})
       }
     })
 
@@ -400,8 +397,13 @@ class AddClass extends Component {
       this.setState({classSel: null})
   }
 
-  removeClass = (event) => {
-    console.log(event)
+  removeClass = (grade_id) => {
+    console.log(grade_id)
+    ipcRenderer.send('grade-remove-post', grade_id)
+    ipcRenderer.once('grade-remove-confirm', (event, arg) => {
+      ipcRenderer.send('grades-list-get', this.state.sid)      
+      console.log(arg) // checks to see if its successfull
+    })
   }
   
 
@@ -426,7 +428,7 @@ class AddClass extends Component {
         <option value={grade['value']}>{grade['grade']}</option>
       )
     })
-    let classesList = this.state.gradesList.map(grade => {
+    let classesList = this.state.gradesList.length !== 0 ? this.state.gradesList.map(grade => {
       return (
         <tr>
           <td>{grade['semester']}</td>
@@ -435,7 +437,7 @@ class AddClass extends Component {
           <td><Button onClick={(e) => this.removeClass(grade['grade_id'])} size="sm" color="danger">X</Button></td>
         </tr>
       )
-    })
+    }) : 'No grades for employee'
 
     //let element = React.createElement('Button', { children:"test"});
     return (
