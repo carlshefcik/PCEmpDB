@@ -103,6 +103,17 @@ export default class Home extends Component {
                 </Card>
               </Link>
             </Col>
+
+            <Col md={3} sm={6}>
+              <Link to="/CourseAssignments">
+                <Card>
+                  <CardBody>
+                    <img top width="100%"  src={newsempic} alt="Card Courses"/>
+                    <CardText>Manage Course Assignments</CardText>
+                  </CardBody>
+                </Card>
+              </Link>
+            </Col>
           </Row>
           <hr/>
           <h2>Peer connections Database Project</h2>

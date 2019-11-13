@@ -154,6 +154,14 @@ export default class EditEmp extends Component {
               <h4>Add/Remove Grades</h4>
             </NavLink>
           </NavItem>
+          <NavItem>
+            <NavLink
+              className={classnames({ active: this.state.activeTab === '3' })}
+              onClick={() => { this.toggle('3'); }}
+            >
+              <h4>Semester Assignments</h4>
+            </NavLink>
+          </NavItem>
         </Nav>
 
         <br/>
@@ -194,6 +202,13 @@ export default class EditEmp extends Component {
             <Row>
               <Col>
                 <AddClass ref="addClass" onRef={ref => (this.addClass = ref)}/>
+              </Col>
+            </Row>
+          </TabPane>
+          <TabPane tabId="3">
+            <Row>
+              <Col>
+                <SemesterAssignmnets />
               </Col>
             </Row>
           </TabPane>
@@ -497,6 +512,60 @@ class AddClass extends Component {
           </Col>
         </Row>
         <hr/>
+        {/* <Button onClick={e => console.log(this.state)}>log state</Button> */}
+      </div>
+      
+    )
+  }
+};
+
+class SemesterAssignmnets extends Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      sid: '',
+      semesters: [],
+    }
+  }
+
+  componentDidMount() {
+
+  }
+
+  componentWillUnmount() {
+    //this.props.onRef(null)
+    // ipcRenderer.removeAllListeners('grades-list-reply')
+  }
+
+  render() {
+    
+
+    //let element = React.createElement('Button', { children:"test"});
+    return (
+      <div>
+        <p>This will have the assingments for the semester listed. It will query the db and group the data for each semester onto a row that will be broken down per each semester.</p>
+        <h2>Ex.</h2>
+        <hr/>
+        <h4>Fall 2018:</h4>
+        <p>Tutor 
+          <ul>
+            <li>CS 146</li>
+            <li>CS 46A</li>
+            <li>CS 46B</li>
+            <li>CS 151</li>
+            <li>MATH 42</li>
+            <li>MATH 31</li>
+          </ul>
+        </p>
+        <hr/>
+        <h4>Spring 2019:</h4>
+        <p>Mentor | MAS 10B S4 | Professor ____ | Students: 80</p>
+        <hr/>
+        <h4>Fall 2019:</h4>
+        <p>Mentor | MAS 10A S4 | Professor ____ | Students: 80</p>
+
+        
+        
         {/* <Button onClick={e => console.log(this.state)}>log state</Button> */}
       </div>
       

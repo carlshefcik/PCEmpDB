@@ -13,6 +13,7 @@ import NewSemester from './components/NewSemester'
 import About from './components/About'
 import Classes from './components/Classes'
 import Talent from './components/Talent'
+import CourseAssignments from './components/CourseAssignments'
 
 class App extends Component {
   render() {
@@ -31,6 +32,7 @@ class App extends Component {
             <Route exact path="/NewSemester" component={NewSemester} />
             <Route exact path="/Classes" component={Classes} />
             <Route exact path="/Talent" component={Talent} />
+            <Route exact path="/CourseAssignments" component={CourseAssignments} />
             <Route exact path="/About" component={About} />
             <Route component={PageNotFound}/>
           </Switch>

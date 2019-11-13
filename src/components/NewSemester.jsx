@@ -74,8 +74,6 @@ export default class NewSemester extends Component {
     ipcRenderer.removeAllListeners('semEmployees-reply')
   }
 
- 
-
   changeNextYearSel = (event) => {
     this.setState({nextYearSel: event.target.value})
   }

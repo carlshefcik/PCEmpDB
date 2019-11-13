@@ -12,9 +12,9 @@ db.serialize(function(){
     function createTables() {
         //semester_list
         db.run(`CREATE TABLE IF NOT EXISTS semester_list (
-            semester_id INTEGER PRIMARY KEY AUTOINCREMENT, 
-            semester varchar(5), 
-            year NUMBER(4))`)
+            semester_id     INTEGER PRIMARY KEY AUTOINCREMENT, 
+            semester        varchar(5), 
+            year            NUMBER(4))`)
             // emp_tbl_name TEXT, 
             // tutor_tbl_name TEXT, 
             // mentor_tbl_name TEXT, 
@@ -23,8 +23,8 @@ db.serialize(function(){
         
         db.run(`
         CREATE TABLE IF NOT EXISTS subject_list (
-            subject_id    INTEGER PRIMARY KEY AUTOINCREMENT, 
-            subject     TEXT)`)
+            subject_id      INTEGER PRIMARY KEY AUTOINCREMENT, 
+            subject         TEXT)`)
 
         db.run(`
         CREATE TABLE IF NOT EXISTS class_list (
@@ -32,6 +32,41 @@ db.serialize(function(){
             subject_id  INTEGER, 
             number      TEXT)`)
 
+        //Professor and course data for the semesters
+        // ? Should this include section number?
+        db.run(`
+        CREATE TABLE IF NOT EXISTS class_sections (
+            class_section_id        INTEGER PRIMARY KEY AUTOINCREMENT,
+            catalog_number          INTEGER,
+            class_id                INTEGER,
+            section_number          TEXT)`)
+
+        db.run(`
+        CREATE TABLE IF NOT EXISTS professors (
+            professor_id        INTEGER PRIMARY KEY AUTOINCREMENT,
+            last_name           TEXT,
+            first_name          TEXT,
+            pronoun_id          INTEGER,
+            email               TEXT,
+            phone_number        TEXT,
+            department          TEXT)`)
+
+        db.run(`
+        CREATE TABLE IF NOT EXISTS class_section_sem_assignments (
+            class_section_sem_assign_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            class_section_id            INTEGER,
+            semester_id                 INTEGER,
+            professor_id                INTEGER,
+            sid                         TEXT)`)
+
+        //table for the semester assingments for tutors
+        db.run(`
+        CREATE TABLE IF NOT EXISTS tutor_sem_assignments (
+            class_id        INTEGER,
+            semester_id     INTEGER,
+            sid             TEXT)`)
+
+        //class grades for employees
         db.run(`
         CREATE TABLE IF NOT EXISTS class_grades (
             grade_id    INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -39,7 +74,8 @@ db.serialize(function(){
             class_id    INTEGER,
             semester_id INTEGER,
             grade       REAL)`)
-
+            
+        //trainging levels for every employee
         db.run(`
         CREATE TABLE IF NOT EXISTS training_levels (
             training_level_id   INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -138,16 +174,16 @@ db.serialize(function(){
 
     //TODO have teh Learning assistants and WDSK AS selections
 
-    // semesterFill()
-    // subjectFill()
-    // classFill()
-    // gradesFill()
-    // strengthsFill()
-    // pronounsFill()
-    // languagesFill()
-    // certificationsFill()
-    // training_levelsFill()
-    // employeeFill()
+    semesterFill()
+    subjectFill()
+    classFill()
+    gradesFill()
+    strengthsFill()
+    pronounsFill()
+    languagesFill()
+    certificationsFill()
+    training_levelsFill()
+    employeeFill()
     
     // TODO add as many semesters as deanna wants(?)
     function semesterFill(){
@@ -298,9 +334,9 @@ db.serialize(function(){
     // delete command
     // db.run('DELETE FROM Employees')
 
-    db.all(`SELECT * FROM pronouns`, (err, rows)=>{
-        console.log(rows)
-    })
+    // db.all(`SELECT * FROM pronouns`, (err, rows)=>{
+    //     console.log(rows)
+    // })
     db.all(`SELECT * FROM semester_list`, (err, rows)=>{
         console.log(rows)
     })
@@ -426,13 +462,20 @@ db.serialize(function(){
     // })
     
 
-    db.serialize(function(){
-        db.all(`SELECT * FROM assigned_strengths JOIN strengths ON strengths.strength_id=assigned_strengths.strength_id WHERE sid='010517091' ORDER BY assigned_strength_id ASC`, (err, rows)=>{ 
-            console.log('-----------------------------------------------------')
-            console.log(err)
-            console.log(rows)
-        })
-    })
+    // db.serialize(function(){
+    //     db.all(`SELECT * FROM assigned_strengths JOIN strengths ON strengths.strength_id=assigned_strengths.strength_id WHERE sid='010517091' ORDER BY assigned_strength_id ASC`, (err, rows)=>{ 
+    //         console.log('-----------------------------------------------------')
+    //         console.log(err)
+    //         console.log(rows)
+    //     })
+    // })
+    // db.serialize(function(){
+    //     db.all(`SELECT * FROM class_sections JOIN class_list ON class_list.class_id=class_sections.class_id JOIN subject_list ON subject_list.subject_id=class_list.subject_id ORDER BY subject_list.subject ASC, class_list.number ASC `, (err, rows)=>{ 
+    //         console.log('-----------------------------------------------------')
+    //         console.log(err)
+    //         console.log(rows)
+    //     })
+    // })
     
     
 

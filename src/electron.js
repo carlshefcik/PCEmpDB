@@ -160,13 +160,6 @@ ipcMain.on('subject-create-post', (event, arg) => {
     }
 })
 
-ipcMain.on('class-manage-post', (event, arg) => {
-    console.log(arg)
-    // TODO create a table in the db that stores class sections with the semester_id and class_id
-    // TODO create a table in the db that stores profesors, table that stores Professors => Class Sections, table that stores Employee => Class sections
-    event.sender.send('class-manage-confirm', 'success')
-})
-
 ipcMain.on('add-post', (event, arg) => {
     //take data and replace the coresponding rows data
 
@@ -244,6 +237,30 @@ ipcMain.on('add-post', (event, arg) => {
     })
     function confirmQuery(queryErr) {
         event.sender.send('add-confirm', queryErr) 
+    }
+})
+
+ipcMain.on('prof-get', (event, arg) => {
+    // console.log(arg);
+    db.serialize(function(){
+        db.all(`SELECT * FROM professors ORDER BY last_name ASC, first_name ASC`, (err, rows)=>{
+            event.sender.send('prof-reply', rows)
+        })
+    })
+})
+
+ipcMain.on('prof-add-post', (event, arg) => {
+    db.serialize(function(){
+        db.run(`INSERT INTO professors (last_name, first_name, pronoun_id, email, phone_number, department) VALUES ('${arg[0]}', '${arg[1]}', ${arg[2]},' ${arg[3]}', '${arg[4]}', '${arg[5]}')`, (err) => { 
+            if(err){
+                confirmQuery(false)
+            } else {
+                confirmQuery(true)
+            }
+        })
+    })
+    function confirmQuery(queryErr) {
+        event.sender.send('prof-add-confirm', queryErr)
     }
 })
 
@@ -624,6 +641,39 @@ ipcMain.on('specInt-assign-remove-post', (event, arg) => {
         })
     })
     function confirmQuery(queryErr) { event.sender.send('specInt-assign-remove-confirm', queryErr) }
+})
+
+ipcMain.on('class-section-get', (event, arg) => {
+    db.serialize(function(){
+        db.all(`SELECT * FROM class_sections JOIN class_list ON class_list.class_id=class_sections.class_id JOIN subject_list ON subject_list.subject_id=class_list.subject_id ORDER BY subject_list.subject ASC, class_list.number ASC `, (err, rows)=>{
+            event.sender.send('class-section-reply', rows)
+        })
+    })
+})
+ipcMain.on('class-section-edit-post', (event, arg) => {
+    db.serialize(function(){
+        db.run(`UPDATE class_sections SET catalog_number=${arg[1]}, section_number='${arg[2]}' WHERE class_section_id=${arg[0]}`, (err) => { 
+            if(err){ console.log(err); confirmQuery(false) } else { confirmQuery(true) }
+        })
+    })
+    function confirmQuery(queryErr) { event.sender.send('class-section-edit-confirm', queryErr) }
+})
+ipcMain.on('class-section-add-post', (event, arg) => {
+    console.log(arg)
+    db.serialize(function(){
+        db.run(`INSERT INTO class_sections (catalog_number, class_id, section_number) VALUES ('${arg[0]}', ${arg[1]}, '${arg[2]}')`, (err) => { 
+            if(err){
+                confirmQuery(false)
+            } else {
+                confirmQuery(true)
+            }
+        })
+    })
+    function confirmQuery(queryErr) {
+        event.sender.send('class-section-add-confirm', queryErr)
+    }
+    // TODO create a table in the db that stores class sections with the semester_id and class_id
+    // TODO create a table in the db that stores profesors, table that stores Professors => Class Sections, table that stores Employee => Class sections
 })
 
 
