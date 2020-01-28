@@ -34,13 +34,15 @@ db.serialize(function(){
 
         //Professor and course data for the semesters
         // ? Should this include section number?
+        // TODO FINISH SEMESTER ASSIGNMENTS 
+        // TODO FINISH PROFESSOR MANAGEMENT
         db.run(`
         CREATE TABLE IF NOT EXISTS class_sections (
             class_section_id        INTEGER PRIMARY KEY AUTOINCREMENT,
             catalog_number          INTEGER,
             class_id                INTEGER,
             section_number          TEXT)`)
-
+        
         db.run(`
         CREATE TABLE IF NOT EXISTS professors (
             professor_id        INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -49,7 +51,11 @@ db.serialize(function(){
             pronoun_id          INTEGER,
             email               TEXT,
             phone_number        TEXT,
-            department          TEXT)`)
+            subject_id          INTEGER)`)
+        
+
+        // TODO COMPLETE IMPLEMENTATION
+        // These tables create the assignments for the semester to the class sections, the professors, and the employees.
 
         db.run(`
         CREATE TABLE IF NOT EXISTS class_section_sem_assignments (
@@ -57,9 +63,18 @@ db.serialize(function(){
             class_section_id            INTEGER,
             semester_id                 INTEGER,
             professor_id                INTEGER,
+            sid                         TEXT,
+            students                    INTEGER)`)
+        db.run(`
+        CREATE TABLE IF NOT EXISTS professor_sem_assignments (
+            class_section_sem_assign_id INTEGER,
+            professor_id                INTEGER)`)
+        db.run(`
+        CREATE TABLE IF NOT EXISTS employee_sem_assignments (
+            class_section_sem_assign_id INTEGER
             sid                         TEXT)`)
 
-        //table for the semester assingments for tutors
+        //table for the semester assingments for tutors specifically
         db.run(`
         CREATE TABLE IF NOT EXISTS tutor_sem_assignments (
             class_id        INTEGER,
@@ -172,7 +187,7 @@ db.serialize(function(){
         //schedule_sent: 0 1
     }
 
-    //TODO have teh Learning assistants and WDSK AS selections
+    //TODO have the Learning assistants and WDSK AS selections
 
     semesterFill()
     subjectFill()
@@ -185,7 +200,7 @@ db.serialize(function(){
     training_levelsFill()
     employeeFill()
     
-    // TODO add as many semesters as deanna wants(?)
+    // TODO add as many semesters back as deanna wants(?)
     function semesterFill(){
         db.run(`INSERT INTO semester_list (semester, year) VALUES ('Spring', 2015)`)
         db.run(`INSERT INTO semester_list (semester, year) VALUES ('Fall', 2015)`)
@@ -219,7 +234,6 @@ db.serialize(function(){
     }
 
     function strengthsFill(){
-        //TODO fill in all 34 strengths
         db.run(`INSERT INTO strengths (strength) VALUES ('Acheiver')`)
         db.run(`INSERT INTO strengths (strength) VALUES ('Adaptable')`)
         db.run(`INSERT INTO strengths (strength) VALUES ('Analytical')`)

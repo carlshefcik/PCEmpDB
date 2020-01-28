@@ -91,9 +91,11 @@ export default class CourseAssignments extends Component {
 
         <h3>To do list: </h3>
         <p>
+        0. Reload the list of classes when a new section is added and when a class is edited<br/>
+        0.1. Create a new <b>semester course assignment</b> page. Select semester -> Select Section -> Add as many professors and Employees and the number of students in the class.<br/>
         1. Assign course for the semester to a proffessor and employee<br/>
         2. Add a proffessor to the DB (data is not semeser based)<br/>
-        3. Edit a proffessor that is already in the db (would we ever need to do this?)<br/>
+        3. <s>Edit a proffessor that is already in the db (would we ever need to do this?)</s><br/>
         4. During semester migration the data for the semester would need to be copied over in a seperate process from the employee data migration
         </p>
 

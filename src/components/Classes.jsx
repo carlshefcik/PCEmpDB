@@ -13,7 +13,7 @@ export default class Classes extends Component {
   constructor(props){
     super(props);
     this.state = {
-      activeTab: '1'
+      activeTab: '2'
     };
   }
 
@@ -34,7 +34,7 @@ export default class Classes extends Component {
       <Container>
         <br/>   
         <Nav tabs>
-          <NavItem>
+          {/* <NavItem>
             <NavLink
               className={classnames({ active: this.state.activeTab === '1' })}
               onClick={() => { this.toggle('1'); }}
@@ -42,7 +42,7 @@ export default class Classes extends Component {
               <h4>Manage Class Sections</h4>
 
             </NavLink>
-          </NavItem>
+          </NavItem> */}
           <NavItem>
             <NavLink
               className={classnames({ active: this.state.activeTab === '2' })}
@@ -92,8 +92,11 @@ export default class Classes extends Component {
         <h3>To do list: </h3>
         <p>
         1. Create classes <br/>
-        2. Edit classes?
+        2. Edit class sections (specifiacallly just the course number)<br/>
+        3. Class sections <b>are not</b> semester specific. They will have another page for their semester specific assignments with multiple professors and Employees.
+        <br/><br/>
         ---SEMESTER SPECIFIC INFO---
+        <br/>
         1. Select classes <br/>
         2. Add class sections for the semseter (Professor?) (need to store professors in DB?)<br/>
         3. Another table stores Employees -> class sections<br/>
