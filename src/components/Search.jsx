@@ -71,7 +71,7 @@ export default class Search extends Component {
                 className={classnames({ active: this.state.activeTab === '3' })}
                 onClick={() => { this.toggle('3'); }}
               >
-                <h4>Faculty Search</h4>
+                <h4>Professor Search</h4>
               </NavLink>
             </NavItem>
           </Nav>
@@ -96,7 +96,7 @@ export default class Search extends Component {
           <TabPane tabId="3">
             <Row>
               <Col>
-                <FacultySearch /> 
+                <ProfessorSearch /> 
               </Col>
             </Row>
           </TabPane>
@@ -164,7 +164,7 @@ class DataTable extends Component {
     searchParams.push(this.state.search_tutor)
     searchParams.push(this.state.search_mentor)
     searchParams.push(this.state.search_si)
-    // TODO redo this employed part
+    //* redo this employed part
     searchParams.push(this.state.search_employed)
     searchParams.push(this.state.search_option)
     //look in the db, the reply will be pased by the icpRenderer
@@ -418,7 +418,7 @@ class DataTable2 extends Component {
 
     //this creates the info inside the datatable
     let items = this.state.data.map(rowData => {
-      // TODO remove this role part and make it in the database?
+      //* remove this role part and make it in the database?
       let role = ''
       if(rowData['role'] === -1) {role = 'N/A'} else if(rowData['role'] === 0) {role = 'Tutor'} else if (rowData['role'] === 1) { role = 'Mentor'} else if (rowData['role'] === 2) { role = 'SI'} else if (rowData['role'] === 3) { role = 'WDS'}
       return (
@@ -507,55 +507,25 @@ class DataTable2 extends Component {
   }
 };
 
-class FacultySearch extends Component {
+class ProfessorSearch extends Component {
   constructor(props){
     super(props);
     this.state = {
-      classes: [],
-      subjectClasses: [],
-      classSel: '',
-      subjects: [],
-      subjectSel: '',
-
-      // search_val: '',
+      search_val: '',
+      search_option: 1,
+      // employed: [],
+      // oldStaff: [],
       dataTable: null,
       data: [0] // needs temp for some reason
     }
   }
 
   componentDidMount() {
-    ipcRenderer.send('classes-get', null)
-    ipcRenderer.send('subject-get', null)
-
-    ipcRenderer.once('classes-reply', (event, arg) => {
-      if(arg.length !== 0){
-        for(let i=0; i<arg.length; i++){
-          let tempClass = {number: arg[i]['number'], class_id: arg[i]['class_id'], subject_id: arg[i]['subject_id']}
-          this.state.classes.push(tempClass) 
-        }
-        // this.setState({classSel: arg[0]['class_id']})
-      } else {
-        console.log('no classes!!!?!?!')
-      }
-    })
-
-    ipcRenderer.once('subject-reply', (event, arg) => {
-      if(arg.length !== 0){
-        for(let i=0; i<arg.length; i++){
-          let tempSubject = {subject: arg[i]['subject'], subject_id: arg[i]['subject_id']}
-          this.state.subjects.push(tempSubject) 
-        }
-        // this.setState({subjectSel: arg[0]['subject_id']}) 
-        this.updateClasses(arg[0]['subject_id']) //sets the subject select and the class select options
-      } else { 
-        console.log('no subjects!!!?!?!')
-      }
-    })
-
-    // this.searchDB()
+    // Loads all the current employees to the list on page open
+    this.searchDB()
 
     // takes reply and adds it to the data
-    ipcRenderer.on('class-search-reply', (event, arg) => {
+    ipcRenderer.on('prof-search-reply', (event, arg) => {
       console.log(arg)
       //removes old reference of datatable
       $(this.refs.table_id).DataTable().destroy()
@@ -569,7 +539,7 @@ class FacultySearch extends Component {
         info: false,
         searching: false,
         columnDefs: [{
-          targets: 5,
+          targets: 2,
           searchable: false,
           orderable: false,
         }],
@@ -577,105 +547,39 @@ class FacultySearch extends Component {
     })
   }
 
-  grade = (gp) => {
-    if(gp == 4)
-      return 'A+'
-    else if (gp == 3.7)
-      return 'A'
-    else if (gp == 3.4)
-      return 'A-'
-    else if (gp == 3.3)
-      return 'B+'
-    else if (gp == 3.0)
-      return 'B'
-    else if (gp == 2.7)
-      return 'B-'
-    else if (gp == 2.3)
-      return 'C+'
-    else if (gp == 2.0)
-      return 'C'
-    else if (gp == 1.7)
-      return 'C-'
-    else if (gp == 1.3)
-      return 'D+'
-    else if (gp == 1.0)
-      return 'D'
-    else if (gp == 0.7)
-      return 'D-'
-    else if (gp == 0)
-      return 'F'
-  }
-
   componentWillUnmount() {
     //this.props.onRef(null)
-    ipcRenderer.removeAllListeners('class-search-reply')
+    ipcRenderer.removeAllListeners('search-reply')
   }
 
-  searchDB = () => {
-    console.log(this.state.classSel)
+  searchDB = () =>{
     //get the the search param state
-    if(this.state.classSel !== ""){
-      // let searchParams = []
-      // searchParams.push(this.state.search_val)
-      //look in the db, the reply will be pased by the icpRenderer
-      ipcRenderer.send('class-search-get', this.state.classSel)
-    }
+    let searchParams = []
+    searchParams.push(this.state.search_val)
+    searchParams.push(this.state.search_option)
+    //look in the db, the reply will be pased by the icpRenderer
+    ipcRenderer.send('prof-search-get', searchParams)
   }
   
   onFormSubmit = (e) => {
     e.preventDefault()
+    // console.log("Searching...")
+    // console.log(this.state)
+    //search the db with the params
     this.searchDB();
   }
-  
-  changeSubject = (event) => {
-    this.setState({subjectSel: event.target.value})
-    this.updateClasses(event.target.value)
-  }
-  changeClass = (event) => {
-    this.setState({classSel: event.target.value})
-  }
-  updateClasses = (subject_id) => {
-    console.log(subject_id)
-    let tempData = this.state.classes
-    let tempSC = []
-    // Changes class number selection here or do it in the render
-    for(let i=0; i < tempData.length; i++){
-      if(tempData[i]['subject_id'] == subject_id)
-        tempSC.push(tempData[i])
-    }
-    this.setState({subjectClasses: tempSC})
-    if(tempSC.length >= 1)
-      this.setState({classSel: tempSC[0]['class_id']})
-    else
-      this.setState({classSel: null})
-  }
+
   
 
   render() {
-    let classOptions = this.state.subjectClasses.map(tempClass => {
-      return (
-        <option value={tempClass['class_id']}>{tempClass['number']}</option>
-      )
-    })
-    let subjectOptions = this.state.subjects.map(subject => {
-      return (
-        <option value={subject['subject_id']}>{subject['subject']}</option>
-      )
-    })
-
     //this creates the info inside the datatable
     let items = this.state.data.map(rowData => {
-      // TODO remove this role part and make it in the database?
-      let role = ''
-      if(rowData['role'] === -1) {role = 'N/A'} else if(rowData['role'] === 0) {role = 'Tutor'} else if (rowData['role'] === 1) { role = 'Mentor'} else if (rowData['role'] === 2) { role = 'SI'} else if (rowData['role'] === 3) { role = 'WDS'}
       return (
         <tr>
-          <td>{this.grade(rowData['grade'])}</td>
           <td>{rowData['first_name']}</td>
           <td>{rowData['last_name']}</td>
-          <td>{rowData['sid']}</td>
-          <td>{role}</td>
-          <td><Link to={"./EditEmp?sid="+rowData['sid']}><Button color='primary' size='sm'>Info</Button></Link></td>
+          {/* <td>{rowData['subject_id']}</td> */}
+          <td><Link to={"./EditProf?professor_id="+rowData['professor_id']}><Button color='primary' size='sm'>Info</Button></Link></td>
         </tr>
       )
     })
@@ -685,21 +589,12 @@ class FacultySearch extends Component {
       <div>
         <Form onSubmit={this.onFormSubmit}>
           <Row form>
-            <Col md={5} sm={6}>
+            <Col md={10} sm={9}>
               <FormGroup>
-                <Input type="select" bsSize="lg" value={this.state.subjectSel} onChange={e => this.changeSubject(e) }>
-                  {subjectOptions}
-                </Input>
+                <Input bsSize="lg" type="text" name="serach_input" id="search_input_id" placeholder="Search Employees..." value={this.state.search_val} onChange={e => this.setState({search_val: e.target.value})}/>
               </FormGroup>
             </Col>
-            <Col md={5} sm={6}>
-              <FormGroup>
-                <Input type="select" bsSize="lg" value={this.state.classSel} onChange={e => this.changeClass(e) }>
-                  {classOptions}
-                </Input>
-              </FormGroup>
-            </Col>
-            <Col md={2} sm={4}>
+            <Col md={2} sm={3}>
               <FormGroup>
                 {/* textright doesnt work */}
                 <Button type="submit" className="text-center" color="primary" size="lg" block>Search</Button>
@@ -707,16 +602,15 @@ class FacultySearch extends Component {
             </Col>
           </Row>
           <Row form>
-            {/* <Col md={6} sm={12}>
+            <Col md={6} sm={12}>
               <FormGroup>
                 <div>
                   <CustomInput inline type="radio" id="customRadio" name="customRadio" label="First Name" value={1} checked={this.state.search_option === 1} onChange={e => this.setState({search_option: 1})} />
                   <CustomInput inline type="radio" id="customRadio2" name="customRadio" label="Last Name" value={2} checked={this.state.search_option === 2} onChange={e => this.setState({search_option: 2})} />
-                  <CustomInput inline type="radio" id="customRadio3" name="customRadio" label="SID" value={3} checked={this.state.search_option === 3} onChange={e => this.setState({search_option: 3})} />
                 </div>
               </FormGroup>
             </Col>
-            <Col md={6} sm={12}>
+            {/* <Col md={6} sm={12}>
               <FormGroup>
                 <div>
                   <CustomInput type="checkbox" id="tutor_check_id" label="Tutor" inline checked={this.state.search_tutor} onChange={e => this.setState({search_tutor: !this.state.search_tutor})}/>
@@ -732,11 +626,9 @@ class FacultySearch extends Component {
         <table ref='table_id' class="table table-striped table-hover table-sm">
           <thead class="thead-dark">
             <tr>
-              <th>Grade</th>
               <th>Firstname</th>
               <th>Lastname</th>
-              <th>SID</th>
-              <th>Role</th>
+              {/* <th>Subject</th> */}
               <th>Info</th>
             </tr>
           </thead>
@@ -746,7 +638,6 @@ class FacultySearch extends Component {
           </tbody>
         </table>
         <hr/>
-        <p>Currently showing grades for currently employed students</p>
         {/* <Button onClick={e => console.log(this.state)}>log state</Button> */}
       </div>
       

@@ -41,7 +41,7 @@ export default class AddEmp extends Component {
       
       if(arg.length !== 0){
         for(let i=0; i<arg.length; i++){
-          // TODO This will have to build the semesters for every one and have the values be the id, so make an object for each semester
+          //* This will have to build the semesters for every one and have the values be the id, so make an object for each semester
           let tempSem = {name: ''+arg[i]['semester']+' '+arg[i]['year'], semester_id: arg[i]['semester_id']}
           this.state.semesters.push(tempSem) 
         }

@@ -51,7 +51,7 @@ export default class EditEmp extends Component {
       // Saving will only save for that semester, (if tabs more straightforward since the button will be set on loading)
 
       //this should be a function that sets the data in the employee form
-      // TODO redo
+      //* redo
       this.setState({data: arg})
       console.log(arg)
       
@@ -76,7 +76,7 @@ export default class EditEmp extends Component {
     // 2. make multiple request the the electron main for the data for the employee
 
     // console.log(dataFromChild)
-    // TODO add objects of the other elemets (stringths languages etc) to this array.
+    //* add objects of the other elemets (stringths languages etc) to this array.
     let data = [dataFromChild]
     ipcRenderer.send('edit-post', data)
     ipcRenderer.once('edit-confirm', (event, arg) => {
@@ -357,6 +357,7 @@ class AddClass extends Component {
     ipcRenderer.removeAllListeners('grades-list-reply')
   }
 
+  //TODO !!!this doesnt work!!!
   addClassGrade = () => {
     let data = {
       semester_id: this.state.semSel,

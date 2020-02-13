@@ -50,11 +50,11 @@ export default class Home extends Component {
               </Link>
             </Col>
             <Col md={3} sm={6}>
-              <Link to="/Analytics">
+              <Link to="/AddProf">
                 <Card>
                   <CardBody>
-                    <img top width="100%"  src={graphpic} alt="Card graph"/>
-                    <CardText>View data visuals for the semseter</CardText>
+                    <img top width="100%"  src={addpic} alt="Card add Prof"/>
+                    <CardText>Add new employees into the database</CardText>
                   </CardBody>
                 </Card>
               </Link>

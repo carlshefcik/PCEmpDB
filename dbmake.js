@@ -32,10 +32,22 @@ db.serialize(function(){
             subject_id  INTEGER, 
             number      TEXT)`)
 
+        db.run(`
+        CREATE TABLE IF NOT EXISTS tutor_sem_assignments (
+            semester_id     INTEGER
+            class_id        INTEGER
+            sid             TEXT)`)
+        db.run(`
+        CREATE TABLE IF NOT EXISTS tutor_data_sem_assignments (
+            semester_id     INTEGER,
+            sid             TEXT,
+            sessions        INTEGER,
+            attendance      INTEGER)`)
+
+
         //Professor and course data for the semesters
         // ? Should this include section number?
-        // TODO FINISH SEMESTER ASSIGNMENTS 
-        // TODO FINISH PROFESSOR MANAGEMENT
+        //* FINISH PROFESSOR MANAGEMENT
         db.run(`
         CREATE TABLE IF NOT EXISTS class_sections (
             class_section_id        INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -54,7 +66,7 @@ db.serialize(function(){
             subject_id          INTEGER)`)
         
 
-        // TODO COMPLETE IMPLEMENTATION
+        //* COMPLETE IMPLEMENTATION
         // These tables create the assignments for the semester to the class sections, the professors, and the employees.
 
         db.run(`
@@ -64,7 +76,7 @@ db.serialize(function(){
             semester_id                 INTEGER,
             professor_id                INTEGER,
             sid                         TEXT,
-            students                    INTEGER)`)
+            students_enrolled           INTEGER)`)
         db.run(`
         CREATE TABLE IF NOT EXISTS professor_sem_assignments (
             class_section_sem_assign_id INTEGER,
@@ -73,6 +85,18 @@ db.serialize(function(){
         CREATE TABLE IF NOT EXISTS employee_sem_assignments (
             class_section_sem_assign_id INTEGER
             sid                         TEXT)`)
+        db.run(`
+        CREATE TABLE IF NOT EXISTS si_data_sem_assignments (
+            class_section_sem_assign_id INTEGER
+            avg_attendance              INTEGER,
+            high_attendance             INTEGER,
+            low_attendance              INTEGER)`)
+        db.run(`
+        CREATE TABLE IF NOT EXISTS mentor_data_sem_assignments (
+            class_section_sem_assign_id INTEGER
+            sessions                    INTEGER,
+            attendance                  INTEGER)`)
+            
 
         //table for the semester assingments for tutors specifically
         db.run(`
@@ -199,6 +223,7 @@ db.serialize(function(){
     certificationsFill()
     training_levelsFill()
     employeeFill()
+    professorFill()
     
     // TODO add as many semesters back as deanna wants(?)
     function semesterFill(){
@@ -340,6 +365,14 @@ db.serialize(function(){
         VALUES 
         (9, "111111111", "Doe", "Jon", "", 1, "", "", 2, "Spring 2020", "Computer Science", "COS", 1, 0, 0, 2, 7, "Good?", "1", "date format", "15.75", "", "", "4")`)
         
+    }
+
+    function professorFill(){
+        db.run(`
+        INSERT INTO professors 
+        (last_name, first_name, pronoun_id, email, phone_number, subject_id)
+        VALUES
+        ("Heller", "Philip", 1, "test@email.edu", "123-456-7890", 1)`)
     }
 
     
@@ -491,7 +524,13 @@ db.serialize(function(){
     //     })
     // })
     
-    
+    db.serialize(function(){
+        db.all(`SELECT * FROM class_sections`, (err, rows)=>{ 
+            console.log('-----------------------------------------------------')
+            console.log(err)
+            console.log(rows)
+        })
+    })
 
 })
 

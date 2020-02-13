@@ -71,7 +71,7 @@ export default class EmployeeForm extends Component {
       semesters:[],
       // semesterSel: ''
 
-      // TODO redo
+      //* redo
       // employed: 1,
     };
   }
@@ -119,7 +119,7 @@ export default class EmployeeForm extends Component {
 
     ipcRenderer.send('languages-get', null)
     ipcRenderer.once('languages-reply', (event, arg) => {
-      this.setState({languages: arg})
+      this.setState({languages: arg, languageSel: arg[0]['language_id']})
     })
     ipcRenderer.send('language-list-get', this.state.sid)
     ipcRenderer.on('language-list-reply', (event, arg) => {
@@ -180,13 +180,13 @@ export default class EmployeeForm extends Component {
       leave_reason:       newData['leave_reason'],
       semester_id:        newData['semester_id'],
 
-      // TODO redo these as seperate queries that will have seperate calls when fill form is called
+      //* redo these as seperate queries that will have seperate calls when fill form is called
       // training_levels:    newData['training_levels'],
       // certifications:     newData['certifications'],
       
       avg_hours_wk:       newData['avg_hours_wk'],
 
-      // TODO redo these as seperate queries that will have seperate calls when fill form is called
+      //*  redo these as seperate queries that will have seperate calls when fill form is called
       // courses:            newData['courses'],
       // languages:          newData['languages'],
       // strengths:          newData['strengths'],

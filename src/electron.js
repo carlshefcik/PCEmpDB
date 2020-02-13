@@ -21,7 +21,7 @@ function getCurrentSemester() {
     })
 }
 
-//TODO all these queries need to check if there was anything in the rows before they start trying to access the data (especially the semester specific ones)
+//* all these queries need to check if there was anything in the rows before they start trying to access the data (especially the semester specific ones)
 // ! Not Used
 // ipcMain.on('employee-get', (event, arg) => {
 //     console.log(arg);
@@ -102,6 +102,44 @@ ipcMain.on('edit-post', (event, arg) => {
     })
     function confirmQuery(queryErr) {
         event.sender.send('edit-confirm', queryErr) 
+    }
+})
+
+// for EditProf page
+ipcMain.on('prof-edit-get', (event, arg) => {    
+    let dbString = `SELECT * FROM professors WHERE professor_id='${arg}'`
+    db.serialize(function(){
+        db.all(dbString, (err, row)=>{ // should only give one row
+            event.sender.send('prof-edit-reply', row)
+        })
+    })
+
+})
+
+ipcMain.on('prof-edit-post', (event, arg) => {
+    //take data and replace the coresponding rows data
+    let profData = arg[0];
+    
+    db.serialize(function(){
+        db.run(`UPDATE professors SET 
+        last_name =            '${profData['last_name']}'
+        ,first_name =          '${profData['first_name']}'
+        ,pronoun_id =          ${profData['pronoun_id']}
+        ,email =               '${profData['email']}'
+        ,phone_number =        '${profData['phone_number']}'
+        WHERE 
+        professor_id =           ${profData['professor_id']}`
+        , (err)=>{ 
+            if(err){
+                console.log(err)
+                confirmQuery(false)
+            } else {
+                confirmQuery(true) // this should be called if all the tables are done
+            }
+        })
+    })
+    function confirmQuery(queryErr) {
+        event.sender.send('prof-edit-confirm', queryErr) 
     }
 })
 
@@ -250,8 +288,10 @@ ipcMain.on('prof-get', (event, arg) => {
 })
 
 ipcMain.on('prof-add-post', (event, arg) => {
+    let profData = arg[0]
     db.serialize(function(){
-        db.run(`INSERT INTO professors (last_name, first_name, pronoun_id, email, phone_number, department) VALUES ('${arg[0]}', '${arg[1]}', ${arg[2]},' ${arg[3]}', '${arg[4]}', '${arg[5]}')`, (err) => { 
+        db.run(`INSERT INTO professors (last_name, first_name, pronoun_id, email, phone_number, subject_id) 
+        VALUES ('${profData['last_name']}', '${profData['first_name']}', ${profData['pronoun_id']}, '${profData['email']}', '${profData['phone_number']}', '${profData['subject_id']}')`, (err) => { 
             if(err){
                 confirmQuery(false)
             } else {
@@ -326,6 +366,33 @@ ipcMain.on('search-get', (event, arg) => {
             })
         })
     }
+})
+
+ipcMain.on('prof-search-get', (event, arg) => {
+    let dbString = '';
+    
+    dbString +=`
+    SELECT professor_id, last_name, first_name, subject_id
+    FROM professors`
+    //professor_id, last_name, first_name, pronoun_id, email, phone_number, subject_id,
+
+    //this should check if we are searching by firstname, lastname, or SID
+    if(arg[0]) { //checks to see if there is a search value
+        if(arg[1] === 1){
+            dbString += 'WHERE first_name LIKE "%'+arg[0]+'%"'
+        } else if (arg[5] === 2){
+            dbString += 'WHERE last_name LIKE "%'+arg[0]+'%"'
+        }
+    }
+       
+
+    db.serialize(function(){
+        //this gets all professors
+        db.all(dbString, (err, rows)=>{
+            event.sender.send('prof-search-reply', rows)
+        })
+    })
+    
 })
 
 ipcMain.on('class-search-get', (event, arg) => {
@@ -645,7 +712,7 @@ ipcMain.on('specInt-assign-remove-post', (event, arg) => {
 
 ipcMain.on('class-section-get', (event, arg) => {
     db.serialize(function(){
-        db.all(`SELECT * FROM class_sections JOIN class_list ON class_list.class_id=class_sections.class_id JOIN subject_list ON subject_list.subject_id=class_list.subject_id ORDER BY subject_list.subject ASC, class_list.number ASC `, (err, rows)=>{
+        db.all(`SELECT * FROM class_sections JOIN class_list ON class_list.class_id=class_sections.class_id JOIN subject_list ON subject_list.subject_id=class_list.subject_id ORDER BY subject_list.subject ASC, class_list.number ASC, class_sections.section_number `, (err, rows)=>{
             event.sender.send('class-section-reply', rows)
         })
     })
@@ -672,7 +739,7 @@ ipcMain.on('class-section-add-post', (event, arg) => {
     function confirmQuery(queryErr) {
         event.sender.send('class-section-add-confirm', queryErr)
     }
-    // TODO create a table in the db that stores class sections with the semester_id and class_id
+    //* create a table in the db that stores class sections with the semester_id and class_id
     // TODO create a table in the db that stores profesors, table that stores Professors => Class Sections, table that stores Employee => Class sections
 })
 
