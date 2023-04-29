@@ -29,7 +29,7 @@
     "datatables.net": "^1.10.19",
     "datatables.net-bs4": "^1.10.19",
     "express": "^4.16.4",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "mysql": "^2.16.0",
     "popper.js": "^1.14.7",
     "react": "^16.6.0",
